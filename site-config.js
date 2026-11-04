@@ -1911,17 +1911,16 @@ window.WEDDING_CONFIG = {
   },
 
   // Navigation items & page visibility toggles
-  // Note: Both human-readable hashes (#wedding-day) and legacy hashes (#p746571) work!
   navigation: [
-    { id: "home", legacyId: "home", label: "HOME", enabled: true },
-    { id: "wedding-day", legacyId: "p746571", label: "WEDDING DAY", enabled: true },
-    { id: "weekend-events", legacyId: "p746572", label: "WEEKEND EVENTS", enabled: true },
-    { id: "our-story", legacyId: "p800595", label: "OUR STORY", enabled: true },
-    { id: "details", legacyId: "p746573", label: "DETAILS", enabled: true },
-    { id: "faqs", legacyId: "p746578", label: "FAQs", enabled: true },
-    { id: "registry", legacyId: "p746574", label: "REGISTRY", enabled: false }, // Hidden on live site right now; flip to true when ready!
-    { id: "rsvp", legacyId: "p746576", label: "RSVP", enabled: false },         // Hidden on live site right now; flip to true in early 2027!
-    { id: "gallery", legacyId: "p747140", label: "Gallery", enabled: true },
+    { id: "home", label: "HOME", enabled: true },
+    { id: "wedding-day", label: "WEDDING DAY", enabled: true },
+    { id: "weekend-events", label: "WEEKEND EVENTS", enabled: true },
+    { id: "our-story", label: "OUR STORY", enabled: true },
+    { id: "details", label: "DETAILS", enabled: true },
+    { id: "faqs", label: "FAQs", enabled: true },
+    { id: "registry", label: "REGISTRY", enabled: false }, // Hidden on live site right now; flip to true when ready!
+    { id: "rsvp", label: "RSVP", enabled: false },         // Hidden on live site right now; flip to true in early 2027!
+    { id: "gallery", label: "Gallery", enabled: true },
   ],
 
   // 1. HOME (Coverpage)

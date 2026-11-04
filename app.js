@@ -335,11 +335,6 @@
     return PAGE_MAP[cleaned] || "home";
   }
 
-  function getLegacyHash(slug) {
-    const navItem = (cfg.navigation || []).find((n) => n.id === slug);
-    return navItem ? navItem.legacyId : slug;
-  }
-
   function updateActiveNavLink(slug) {
     document.querySelectorAll("#navContent .navItem").forEach((a) => {
       if (a.getAttribute("data-page") === slug) {
@@ -403,20 +398,18 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
+    const fullTitle = targetSlug !== "home" && pageTitleLabel ? `${baseTitle} | ${pageTitleLabel}` : baseTitle;
+    const targetUrl = targetSlug !== "home" ? `#${targetSlug}` : window.location.pathname + window.location.search;
+    document.title = fullTitle;
+
     if (!skipHistory) {
-      const legacyId = getLegacyHash(targetSlug);
-      if (targetSlug !== "home") {
-        const fullTitle = `${baseTitle} | ${pageTitleLabel}`;
-        try {
-          window.history.pushState({ set: targetSlug, title: fullTitle }, fullTitle, `#${legacyId}`);
-        } catch (_) {}
-        document.title = fullTitle;
-      } else {
-        try {
-          window.history.pushState({ set: "home", title: baseTitle }, baseTitle, window.location.pathname);
-        } catch (_) {}
-        document.title = baseTitle;
-      }
+      try {
+        window.history.pushState({ set: targetSlug, title: fullTitle }, fullTitle, targetUrl);
+      } catch (_) {}
+    } else if (window.location.hash && window.location.hash !== `#${targetSlug}`) {
+      try {
+        window.history.replaceState({ set: targetSlug, title: fullTitle }, fullTitle, targetUrl);
+      } catch (_) {}
     }
 
     currentPage = targetSlug;
