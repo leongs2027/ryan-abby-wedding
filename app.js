@@ -936,6 +936,7 @@
     if (btnLockGate) {
       btnLockGate.addEventListener("click", () => {
         safeStorageRemove("ryan_abby_unlocked_guest");
+        safeStorageRemove("ryan_abby_unlocked_guest_v2");
         const gate = document.getElementById("guestPasswordGate");
         const input = document.getElementById("guestLastNameInput");
         const err = document.getElementById("guestGateError");
@@ -960,7 +961,7 @@
   }
 
   // =========================================================================
-  // 7B. Guest Last-Name Password Gate (SHA-256 Verified against Guest List)
+  // 7B. Guest Full-Name Password Gate (SHA-256 Verified against Guest List)
   // =========================================================================
   function sha256Hex(ascii) {
     function rightRotate(value, amount) {
@@ -1040,7 +1041,7 @@
     return result;
   }
 
-  function normalizeSurname(raw) {
+  function normalizeNamePart(raw) {
     return String(raw || "")
       .normalize("NFKD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -1049,46 +1050,98 @@
       .replace(/[^a-z0-9\u4e00-\u9fff]/g, "");
   }
 
+  const IGNORED_NAME_TITLES = new Set([
+    "mr",
+    "mrs",
+    "ms",
+    "miss",
+    "mx",
+    "dr",
+    "prof",
+    "and",
+    "the",
+    "family",
+    "jr",
+    "sr",
+    "ii",
+    "iii",
+    "iv",
+  ]);
+
   function findMatchingGuestHash(rawInput, allowedSet) {
     const trimmed = String(rawInput || "").trim();
     if (!trimmed) return null;
 
-    const candidates = new Set();
-    const addCandidateVariants = (token) => {
-      const norm = normalizeSurname(token);
-      if (!norm) return;
-      candidates.add(norm);
-      // Support family plurals like "The Leongs", "Yoons", "Homs"
-      if (norm.length > 3 && norm.endsWith("s")) {
-        candidates.add(norm.slice(0, -1));
+    // 1. Check for full Chinese (CJK) guest names (e.g., 王桂香, 王桂珍, 靳守拙, 袁肇平)
+    const cjkMatches = trimmed.match(/[\u4e00-\u9fff]{2,}/g);
+    if (cjkMatches) {
+      for (const cjk of cjkMatches) {
+        const h = sha256Hex("cjk:" + normalizeNamePart(cjk));
+        if (allowedSet.has(h)) return h;
       }
-      if (norm.length > 4 && norm.endsWith("es")) {
-        candidates.add(norm.slice(0, -2));
+    }
+
+    // 2. Tokenize into individual words, stripping titles/connectors
+    //    Requires at least First Name + Last Name (2+ name tokens); last-name-only is rejected.
+    const rawWords = trimmed
+      .split(/[\s,&/+.;:()'"-]+/)
+      .map(normalizeNamePart)
+      .filter((w) => w && !IGNORED_NAME_TITLES.has(w));
+
+    if (rawWords.length < 2) {
+      return null;
+    }
+
+    // Build candidate tokens including adjacent 2-word combinations for hyphenated/compound
+    // first or last names (e.g., "Lu-lin Leong", "Bao Yi Lei", "Joanna Felix-Mendez", "Rachel Mendoza Cabral")
+    const candidatePairs = [];
+    for (let i = 0; i < rawWords.length; i++) {
+      for (let j = 0; j < rawWords.length; j++) {
+        if (i !== j) {
+          candidatePairs.push([rawWords[i], rawWords[j]]);
+        }
       }
+    }
+    if (rawWords.length >= 3) {
+      for (let i = 0; i < rawWords.length - 1; i++) {
+        const joined = rawWords[i] + rawWords[i + 1];
+        for (let k = 0; k < rawWords.length; k++) {
+          if (k !== i && k !== i + 1) {
+            candidatePairs.push([joined, rawWords[k]]);
+            candidatePairs.push([rawWords[k], joined]);
+          }
+        }
+      }
+    }
+
+    const testFirstLast = (first, last) => {
+      if (!first || !last) return null;
+      const exactHash = sha256Hex(`${first}:${last}`);
+      if (allowedSet.has(exactHash)) return exactHash;
+
+      // Also check 4-letter and 3-letter first-name prefixes paired with exact surname
+      // so natural nickname variations (e.g., "Johnny Yoon" for "John Yoon") work seamlessly
+      if (first.length >= 4) {
+        const p4Hash = sha256Hex(`p4:${first.slice(0, 4)}:${last}`);
+        if (allowedSet.has(p4Hash)) return p4Hash;
+      }
+      if (first.length >= 3) {
+        const p3Hash = sha256Hex(`p3:${first.slice(0, 3)}:${last}`);
+        if (allowedSet.has(p3Hash)) return p3Hash;
+      }
+      return null;
     };
 
-    // 1. Whole input normalized
-    addCandidateVariants(trimmed);
-
-    // 2. Every individual word/token (accepts full names like "Denise Hom",
-    //    "John Yoon", variations like "Johnny Yoon", couples like "Denise Hom & John Yoon",
-    //    hyphenated names like "Felix-Mendez", or "Last, First" formats)
-    const tokens = trimmed.split(/[\s,&/+.;:()'"-]+/).filter(Boolean);
-    tokens.forEach((tok) => {
-      addCandidateVariants(tok);
-    });
-
-    // 3. Every adjacent 2-word joined combination (for multi-word surnames like "Mendoza Cabral")
-    for (let i = 0; i < tokens.length - 1; i++) {
-      addCandidateVariants(tokens[i] + tokens[i + 1]);
-    }
-
-    for (const cand of candidates) {
-      const h = sha256Hex(cand);
-      if (allowedSet.has(h)) {
-        return h;
+    for (const [first, last] of candidatePairs) {
+      const matched = testFirstLast(first, last);
+      if (matched) return matched;
+      // Also support pluralized surname if someone types e.g. "John Yoons"
+      if (last.length > 3 && last.endsWith("s")) {
+        const matchedSingular = testFirstLast(first, last.slice(0, -1));
+        if (matchedSingular) return matchedSingular;
       }
     }
+
     return null;
   }
 
@@ -1126,18 +1179,29 @@
       const params = new URLSearchParams(window.location.search);
       if (params.get("lock") === "1") {
         safeStorageRemove("ryan_abby_unlocked_guest");
+        safeStorageRemove("ryan_abby_unlocked_guest_v2");
       }
     } catch (_) {}
 
-    const allowedSet = new Set(gateCfg.allowedLastNameHashes || []);
-    if (Array.isArray(gateCfg.extraAllowedLastNames)) {
-      gateCfg.extraAllowedLastNames.forEach((extra) => {
-        const n = normalizeSurname(extra);
-        if (n) allowedSet.add(sha256Hex(n));
+    const allowedSet = new Set(gateCfg.allowedGuestNameHashes || []);
+    if (Array.isArray(gateCfg.extraAllowedFullNames)) {
+      gateCfg.extraAllowedFullNames.forEach((extra) => {
+        const parts = String(extra || "")
+          .trim()
+          .split(/\s+/)
+          .map(normalizeNamePart)
+          .filter(Boolean);
+        if (parts.length >= 2) {
+          const f = parts[0];
+          const l = parts[parts.length - 1];
+          allowedSet.add(sha256Hex(`${f}:${l}`));
+          if (f.length >= 3) allowedSet.add(sha256Hex(`p3:${f.slice(0, 3)}:${l}`));
+          if (f.length >= 4) allowedSet.add(sha256Hex(`p4:${f.slice(0, 4)}:${l}`));
+        }
       });
     }
 
-    const savedUnlock = safeStorageGet("ryan_abby_unlocked_guest");
+    const savedUnlock = safeStorageGet("ryan_abby_unlocked_guest_v2");
     if (savedUnlock && allowedSet.has(savedUnlock)) {
       gate.classList.add("unlocked");
       setTimeout(() => {
@@ -1151,7 +1215,7 @@
       const val = inputEl ? inputEl.value : "";
       const matchedHash = findMatchingGuestHash(val, allowedSet);
       if (matchedHash) {
-        safeStorageSet("ryan_abby_unlocked_guest", matchedHash);
+        safeStorageSet("ryan_abby_unlocked_guest_v2", matchedHash);
         gate.classList.add("unlocked");
         if (inputEl) inputEl.blur();
         setTimeout(() => {
@@ -1161,9 +1225,20 @@
         if (inputEl) inputEl.classList.add("error");
         if (errEl) {
           const email = (cfg.meta && cfg.meta.contactEmail) || "leongs2027@gmail.com";
-          errEl.innerHTML = `We couldn't find that name on our guest list. Please check the spelling, try your partner's name, or reach out to <a href="mailto:${escapeHtml(
-            email
-          )}">${escapeHtml(email)}</a> if you are unable to access the website.`;
+          const rawTokens = String(val || "")
+            .trim()
+            .split(/[\s,&/+.;:()'"-]+/)
+            .map(normalizeNamePart)
+            .filter((w) => w && !IGNORED_NAME_TITLES.has(w));
+          if (rawTokens.length === 1 && !/[\u4e00-\u9fff]{2,}/.test(val)) {
+            errEl.innerHTML = `Please enter both your <strong>first and last name</strong> (e.g., John Yoon). Having trouble? Reach out to <a href="mailto:${escapeHtml(
+              email
+            )}">${escapeHtml(email)}</a>.`;
+          } else {
+            errEl.innerHTML = `We couldn't find that name on our guest list. Please enter your first and last name, try your partner's name, or reach out to <a href="mailto:${escapeHtml(
+              email
+            )}">${escapeHtml(email)}</a> if you are unable to access the website.`;
+          }
           errEl.classList.add("visible");
         }
       }

@@ -1727,7 +1727,7 @@ footer.coverpage {
   main section.gallery-thumbnails {
     padding-top: 20px;
   }
-  main section.gallery-collage {
+  main section.gallery-collage:not([style*="display: none"]) {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
@@ -2026,7 +2026,7 @@ body.mobile-preview-mode .section.split .sectionCont .imgCont .textCont {
 body.mobile-preview-mode .section.nested .imgCont .textCont h3 {
   width: 100%;
 }
-body.mobile-preview-mode main section.gallery-collage {
+body.mobile-preview-mode main section.gallery-collage:not([style*="display: none"]) {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
