@@ -151,13 +151,18 @@
       applyThemeFonts(cfg.theme.fonts);
     }
 
-    // Navigation visibility
+    // Navigation visibility & clean URL hrefs
+    const basePath = getSiteBasePath();
+    if (monogramEl) {
+      monogramEl.setAttribute("href", `${basePath}/`);
+    }
     if (Array.isArray(cfg.navigation)) {
       cfg.navigation.forEach((item) => {
         const navLink = document.querySelector(`#navScrollList a[data-page="${item.id}"]`);
         if (navLink) {
           navLink.textContent = item.label;
           navLink.style.display = item.enabled ? "block" : "none";
+          navLink.setAttribute("href", item.id === "home" ? `${basePath}/` : `${basePath}/${item.id}`);
         }
       });
     }
@@ -329,9 +334,37 @@
   // =========================================================================
   // 3. Navigation & Routing (Multi-Page Tab Mode + Single-Page Scroll Mode)
   // =========================================================================
+  function getSiteBasePath() {
+    const path = window.location.pathname || "/";
+    const match = path.match(/^(.*\/ryan-abby-wedding)(?:\/.*)?$/);
+    return match ? match[1] : "";
+  }
+
+  function getCurrentLocationTarget() {
+    if (window.history && window.history.state && window.history.state.set) {
+      return window.history.state.set;
+    }
+    if (window.location.hash && window.location.hash.length > 1) {
+      return window.location.hash.slice(1);
+    }
+    const initialAttr = document.documentElement.getAttribute("data-initial-page");
+    if (initialAttr) {
+      return initialAttr;
+    }
+    return window.location.pathname || "home";
+  }
+
   function resolvePageSlug(raw) {
     if (!raw) return "home";
-    const cleaned = raw.replace(/^.*#/, "").replace(/^\//, "").trim();
+    let cleaned = String(raw).trim();
+    if (cleaned.includes("#")) {
+      cleaned = cleaned.split("#").pop();
+    } else {
+      cleaned = cleaned.split("?")[0];
+      const segments = cleaned.split("/").filter(Boolean);
+      cleaned = segments.length ? segments[segments.length - 1] : "home";
+    }
+    cleaned = cleaned.replace(/\.html$/i, "").toLowerCase();
     return PAGE_MAP[cleaned] || "home";
   }
 
@@ -371,11 +404,12 @@
           sec.style.display = "none";
         }
       });
+      document.documentElement.removeAttribute("data-initial-page");
       updateLayout();
       const targetSec = document.querySelector(`main > section[data-page="${targetSlug}"]`);
       if (targetSec) {
         const dest = Math.max(0, targetSec.getBoundingClientRect().top + window.pageYOffset - getHeaderHeight());
-        window.scrollTo({ top: dest, behavior: "smooth" });
+        window.scrollTo({ top: dest, behavior: skipHistory ? "auto" : "smooth" });
       }
     } else {
       main.classList.remove("singlePage");
@@ -387,6 +421,7 @@
           sec.style.display = "none";
         }
       });
+      document.documentElement.removeAttribute("data-initial-page");
 
       const targetSec = document.querySelector(`main > section[data-page="${targetSlug}"]`);
       const isCover = targetSec && targetSec.classList.contains("coverpage");
@@ -395,18 +430,20 @@
       footer.className = isCover ? `${targetSlug} coverpage` : targetSlug;
 
       updateLayout();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: skipHistory ? "auto" : "smooth" });
     }
 
     const fullTitle = targetSlug !== "home" && pageTitleLabel ? `${baseTitle} | ${pageTitleLabel}` : baseTitle;
-    const targetUrl = targetSlug !== "home" ? `#${targetSlug}` : window.location.pathname + window.location.search;
+    const basePath = getSiteBasePath();
+    const cleanPath = targetSlug !== "home" ? `${basePath}/${targetSlug}` : `${basePath}/`;
+    const targetUrl = cleanPath + window.location.search;
     document.title = fullTitle;
 
     if (!skipHistory) {
       try {
         window.history.pushState({ set: targetSlug, title: fullTitle }, fullTitle, targetUrl);
       } catch (_) {}
-    } else if (window.location.hash && window.location.hash !== `#${targetSlug}`) {
+    } else if (window.location.hash || window.location.pathname !== cleanPath) {
       try {
         window.history.replaceState({ set: targetSlug, title: fullTitle }, fullTitle, targetUrl);
       } catch (_) {}
@@ -930,6 +967,7 @@
       btnLockGate.addEventListener("click", () => {
         safeStorageRemove("ryan_abby_unlocked_guest");
         safeStorageRemove("ryan_abby_unlocked_guest_v2");
+        document.documentElement.classList.remove("guest-pre-unlocked", "guest-unlocked-live");
         const gate = document.getElementById("guestPasswordGate");
         const input = document.getElementById("guestLastNameInput");
         const err = document.getElementById("guestGateError");
@@ -1144,6 +1182,7 @@
 
     const gateCfg = cfg.passwordGate || {};
     if (gateCfg.enabled === false) {
+      document.documentElement.classList.add("guest-pre-unlocked");
       gate.classList.add("unlocked");
       gate.style.display = "none";
       return;
@@ -1173,6 +1212,7 @@
       if (params.get("lock") === "1") {
         safeStorageRemove("ryan_abby_unlocked_guest");
         safeStorageRemove("ryan_abby_unlocked_guest_v2");
+        document.documentElement.classList.remove("guest-pre-unlocked", "guest-unlocked-live");
       }
     } catch (_) {}
 
@@ -1196,12 +1236,16 @@
 
     const savedUnlock = safeStorageGet("ryan_abby_unlocked_guest_v2");
     if (savedUnlock && allowedSet.has(savedUnlock)) {
+      document.documentElement.classList.add("guest-pre-unlocked");
       gate.classList.add("unlocked");
-      setTimeout(() => {
-        gate.style.display = "none";
-      }, 400);
+      gate.style.display = "none";
       return;
     }
+
+    // Not unlocked (or stored hash is invalid): ensure gate is visible
+    document.documentElement.classList.remove("guest-pre-unlocked", "guest-unlocked-live");
+    gate.classList.remove("unlocked");
+    gate.style.display = "flex";
 
     const attemptUnlock = (e) => {
       if (e) e.preventDefault();
@@ -1209,9 +1253,11 @@
       const matchedHash = findMatchingGuestHash(val, allowedSet);
       if (matchedHash) {
         safeStorageSet("ryan_abby_unlocked_guest_v2", matchedHash);
+        document.documentElement.classList.add("guest-unlocked-live");
         gate.classList.add("unlocked");
         if (inputEl) inputEl.blur();
         setTimeout(() => {
+          document.documentElement.classList.add("guest-pre-unlocked");
           gate.style.display = "none";
         }, 420);
       } else {
@@ -1302,7 +1348,7 @@
 
     // Browser back/forward navigation
     window.addEventListener("popstate", (e) => {
-      const stateSet = e.state && e.state.set ? e.state.set : window.location.hash.slice(1) || "home";
+      const stateSet = e.state && e.state.set ? e.state.set : getCurrentLocationTarget();
       loadPage(stateSet, true);
     });
 
@@ -1335,7 +1381,7 @@
     }
 
     // Initial route load
-    const initialTarget = window.location.hash ? window.location.hash.slice(1) : "home";
+    const initialTarget = getCurrentLocationTarget();
     loadPage(initialTarget, true);
   });
 

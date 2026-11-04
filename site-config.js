@@ -2250,7 +2250,7 @@ window.WEDDING_CONFIG = {
       },
       {
         label: "Cash Registry",
-        url: "#registry",
+        url: "/registry",
       },
     ],
   },

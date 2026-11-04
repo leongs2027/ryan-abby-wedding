@@ -19,7 +19,95 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&amp;family=Caveat:wght@500&amp;family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&amp;family=Great+Vibes&amp;family=Instrument+Serif:ital@0;1&amp;family=Libre+Baskerville:ital,wght@0,400;1,400&amp;family=Lora:ital,wght@0,400;1,400&amp;family=Montserrat:wght@300;400&amp;family=Pinyon+Script&amp;family=Playfair+Display:ital,wght@0,400;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500&amp;display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=7" type="text/css" />
+  <link rel="stylesheet" href="styles.css?v=8" type="text/css" />
+  <script>
+    (function () {
+      try {
+        var search = window.location.search || "";
+        if (search.indexOf("lock=1") !== -1) {
+          try { window.localStorage.removeItem("ryan_abby_unlocked_guest"); } catch (_) {}
+          try { window.localStorage.removeItem("ryan_abby_unlocked_guest_v2"); } catch (_) {}
+        }
+        var unlocked = null;
+        try {
+          unlocked = window.localStorage.getItem("ryan_abby_unlocked_guest_v2");
+        } catch (_) {}
+        if (!unlocked && window.name && window.name.charAt(0) === "{") {
+          try {
+            var parsed = JSON.parse(window.name);
+            if (parsed && parsed.ryan_abby_unlocked_guest_v2) {
+              unlocked = parsed.ryan_abby_unlocked_guest_v2;
+            }
+          } catch (_) {}
+        }
+        if (unlocked && /^[a-f0-9]{64}$/.test(unlocked)) {
+          document.documentElement.classList.add("guest-pre-unlocked");
+        }
+        var pageMap = {
+          home: "home",
+          "wedding-day": "wedding-day",
+          p746571: "wedding-day",
+          "weekend-events": "weekend-events",
+          p746572: "weekend-events",
+          "our-story": "our-story",
+          p800595: "our-story",
+          details: "details",
+          p746573: "details",
+          faqs: "faqs",
+          p746578: "faqs",
+          registry: "registry",
+          p746574: "registry",
+          rsvp: "rsvp",
+          p746576: "rsvp",
+          gallery: "gallery",
+          p747140: "gallery"
+        };
+        var raw = (window.location.hash && window.location.hash.length > 1)
+          ? window.location.hash.slice(1)
+          : (window.location.pathname || "home");
+        var cleaned = String(raw).split("?")[0].replace(/^.*#/, "");
+        var segs = cleaned.split("/").filter(Boolean);
+        var lastSeg = (segs.length ? segs[segs.length - 1] : "home").replace(/\.html$/i, "").toLowerCase();
+        var slug = pageMap[lastSeg] || "home";
+        document.documentElement.setAttribute("data-initial-page", slug);
+        if (window.location.hash) {
+          var baseMatch = (window.location.pathname || "/").match(/^(.*\/ryan-abby-wedding)(?:\/.*)?$/);
+          var base = baseMatch ? baseMatch[1] : "";
+          var cleanPath = slug !== "home" ? (base + "/" + slug) : (base + "/");
+          try {
+            window.history.replaceState({ set: slug }, "", cleanPath + (window.location.search || ""));
+          } catch (_) {}
+        }
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html.guest-pre-unlocked #guestPasswordGate {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: none !important;
+    }
+    html:not(.guest-pre-unlocked):not(.guest-unlocked-live) #siteHeader,
+    html:not(.guest-pre-unlocked):not(.guest-unlocked-live) #MMlinkCont,
+    html:not(.guest-pre-unlocked):not(.guest-unlocked-live) #siteMain,
+    html:not(.guest-pre-unlocked):not(.guest-unlocked-live) #siteFooter {
+      visibility: hidden;
+    }
+    html[data-initial-page] main:not(.singlePage) > section {
+      display: none;
+    }
+    html[data-initial-page="home"] #sec-home { display: block; }
+    html[data-initial-page="wedding-day"] #sec-wedding-day { display: block; }
+    html[data-initial-page="weekend-events"] #sec-weekend-events { display: block; }
+    html[data-initial-page="our-story"] #sec-our-story { display: block; }
+    html[data-initial-page="details"] #sec-details { display: block; }
+    html[data-initial-page="faqs"] #sec-faqs { display: block; }
+    html[data-initial-page="registry"] #sec-registry { display: block; }
+    html[data-initial-page="rsvp"] #sec-rsvp { display: block; }
+    html[data-initial-page="gallery"] #sec-gallery { display: flex; }
+  </style>
 </head>
 <body>
 
@@ -58,15 +146,15 @@
     <div class="bgBox" style="background-color: rgba(255,250,241,0.8)"></div>
     <nav aria-label="Primary Navigation">
       <div class="navScroll" id="navScrollList">
-        <a href="#home" data-page="home" data-legacy="home" class="navItem select" rel="nofollow">HOME</a>
-        <a href="#wedding-day" data-page="wedding-day" data-legacy="p746571" class="navItem" rel="nofollow">WEDDING DAY</a>
-        <a href="#weekend-events" data-page="weekend-events" data-legacy="p746572" class="navItem" rel="nofollow">WEEKEND EVENTS</a>
-        <a href="#our-story" data-page="our-story" data-legacy="p800595" class="navItem" rel="nofollow">OUR STORY</a>
-        <a href="#details" data-page="details" data-legacy="p746573" class="navItem" rel="nofollow">DETAILS</a>
-        <a href="#faqs" data-page="faqs" data-legacy="p746578" class="navItem" rel="nofollow">FAQs</a>
-        <a href="#registry" data-page="registry" data-legacy="p746574" class="navItem" rel="nofollow" style="display: none;">REGISTRY</a>
-        <a href="#rsvp" data-page="rsvp" data-legacy="p746576" class="navItem" rel="nofollow" style="display: none;">RSVP</a>
-        <a href="#gallery" data-page="gallery" data-legacy="p747140" class="navItem" rel="nofollow">Gallery</a>
+        <a href="/" data-page="home" class="navItem select" rel="nofollow">HOME</a>
+        <a href="/wedding-day" data-page="wedding-day" class="navItem" rel="nofollow">WEDDING DAY</a>
+        <a href="/weekend-events" data-page="weekend-events" class="navItem" rel="nofollow">WEEKEND EVENTS</a>
+        <a href="/our-story" data-page="our-story" class="navItem" rel="nofollow">OUR STORY</a>
+        <a href="/details" data-page="details" class="navItem" rel="nofollow">DETAILS</a>
+        <a href="/faqs" data-page="faqs" class="navItem" rel="nofollow">FAQs</a>
+        <a href="/registry" data-page="registry" class="navItem" rel="nofollow" style="display: none;">REGISTRY</a>
+        <a href="/rsvp" data-page="rsvp" class="navItem" rel="nofollow" style="display: none;">RSVP</a>
+        <a href="/gallery" data-page="gallery" class="navItem" rel="nofollow">Gallery</a>
       </div>
     </nav>
   </div>
@@ -74,7 +162,7 @@
   <!-- Fixed Top Header -->
   <header id="siteHeader" class="home coverpage header">
     <h1 class="monogram text">
-      <a href="#home" data-page="home" class="navItem" id="headerMonogram" rel="nofollow">The Leongs</a>
+      <a href="/" data-page="home" class="navItem" id="headerMonogram" rel="nofollow">The Leongs</a>
     </h1>
   </header>
 
@@ -89,7 +177,7 @@
     <!-- ==================================================================
          1. HOME (Coverpage)
          ================================================================== -->
-    <section id="sec-home" data-page="home" data-legacy="home" class="home halign-center valign-middle coverpage header square" style="display: block;">
+    <section id="sec-home" data-page="home" data-legacy="home" class="home halign-center valign-middle coverpage header square">
       <h1 id="coverpage_0" class="logo" style="font-family: var(--font-display); font-size: 102px; color: #FFFAF1; letter-spacing: 0px;">
         <span style="filter: drop-shadow(rgba(0, 0, 0, 0.2) -1px -1px 0px) drop-shadow(rgba(255, 255, 255, 0) 1px 1px 0px);">
           <span id="homeHeadlineText">WE'RE GETTING MARRIED!</span><br /><br /><br />
@@ -656,7 +744,7 @@
                   <a href="https://www.williams-sonoma.com/registry/g2fkbkwbh9/registry-list.html" class="button outline" target="_blank" rel="noopener"><span style="color: var(--color-primary); border-color: var(--color-primary)">Williams Sonoma</span></a>
                   <a href="https://www.surlatable.com/" class="button outline" target="_blank" rel="noopener"><span style="color: var(--color-primary); border-color: var(--color-primary)">Sur La Table</span></a>
                   <a href="https://www.crateandbarrel.com/" class="button outline" target="_blank" rel="noopener"><span style="color: var(--color-primary); border-color: var(--color-primary)">Crate &amp; Barrel</span></a>
-                  <a href="#registry" class="button outline"><span style="color: var(--color-primary); border-color: var(--color-primary)">Cash Registry</span></a>
+                  <a href="/registry" class="button outline"><span style="color: var(--color-primary); border-color: var(--color-primary)">Cash Registry</span></a>
                 </div>
               </div>
             </div>
@@ -890,7 +978,7 @@
     </div>
   </div>
 
-  <script src="site-config.js?v=7"></script>
-  <script src="app.js?v=7"></script>
+  <script src="site-config.js?v=8"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>
