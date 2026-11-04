@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&amp;family=Caveat:wght@500&amp;family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&amp;family=Great+Vibes&amp;family=Instrument+Serif:ital@0;1&amp;family=Libre+Baskerville:ital,wght@0,400;1,400&amp;family=Lora:ital,wght@0,400;1,400&amp;family=Montserrat:wght@300;400&amp;family=Pinyon+Script&amp;family=Playfair+Display:ital,wght@0,400;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500&amp;display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=8" type="text/css" />
+  <link rel="stylesheet" href="styles.css?v=9" type="text/css" />
   <script>
     (function () {
       try {
@@ -27,16 +27,17 @@
         if (search.indexOf("lock=1") !== -1) {
           try { window.localStorage.removeItem("ryan_abby_unlocked_guest"); } catch (_) {}
           try { window.localStorage.removeItem("ryan_abby_unlocked_guest_v2"); } catch (_) {}
+          try { window.localStorage.removeItem("ryan_abby_unlocked_guest_v3"); } catch (_) {}
         }
         var unlocked = null;
         try {
-          unlocked = window.localStorage.getItem("ryan_abby_unlocked_guest_v2");
+          unlocked = window.localStorage.getItem("ryan_abby_unlocked_guest_v3");
         } catch (_) {}
         if (!unlocked && window.name && window.name.charAt(0) === "{") {
           try {
             var parsed = JSON.parse(window.name);
-            if (parsed && parsed.ryan_abby_unlocked_guest_v2) {
-              unlocked = parsed.ryan_abby_unlocked_guest_v2;
+            if (parsed && parsed.ryan_abby_unlocked_guest_v3) {
+              unlocked = parsed.ryan_abby_unlocked_guest_v3;
             }
           } catch (_) {}
         }
@@ -978,7 +979,7 @@
     </div>
   </div>
 
-  <script src="site-config.js?v=8"></script>
-  <script src="app.js?v=8"></script>
+  <script src="site-config.js?v=9"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

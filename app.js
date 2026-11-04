@@ -967,6 +967,7 @@
       btnLockGate.addEventListener("click", () => {
         safeStorageRemove("ryan_abby_unlocked_guest");
         safeStorageRemove("ryan_abby_unlocked_guest_v2");
+        safeStorageRemove("ryan_abby_unlocked_guest_v3");
         document.documentElement.classList.remove("guest-pre-unlocked", "guest-unlocked-live");
         const gate = document.getElementById("guestPasswordGate");
         const input = document.getElementById("guestLastNameInput");
@@ -1099,9 +1100,46 @@
     "iv",
   ]);
 
+  const BLOCKED_COUPLE_FIRSTS = new Set([
+    "ryan",
+    "rya",
+    "abby",
+    "abb",
+    "abigail",
+    "abi",
+    "abig",
+  ]);
+  const BLOCKED_COUPLE_LASTS = new Set(["leong", "jin"]);
+
+  function isBlockedCoupleName(first, last) {
+    if (!first || !last) return false;
+    const f3 = first.slice(0, 3);
+    const l3 = last.slice(0, 3);
+    if (
+      (BLOCKED_COUPLE_FIRSTS.has(first) || BLOCKED_COUPLE_FIRSTS.has(f3)) &&
+      BLOCKED_COUPLE_LASTS.has(last)
+    ) {
+      return true;
+    }
+    if (
+      (BLOCKED_COUPLE_FIRSTS.has(last) || BLOCKED_COUPLE_FIRSTS.has(l3)) &&
+      BLOCKED_COUPLE_LASTS.has(first)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   function findMatchingGuestHash(rawInput, allowedSet) {
     const trimmed = String(rawInput || "").trim();
     if (!trimmed) return null;
+
+    // 0. Check for admin password (e.g. "samoyed")
+    const adminNorm = normalizeNamePart(trimmed);
+    if (adminNorm) {
+      const adminHash = sha256Hex("admin:" + adminNorm);
+      if (allowedSet.has(adminHash)) return adminHash;
+    }
 
     // 1. Check for full Chinese (CJK) guest names (e.g., 王桂香, 王桂珍, 靳守拙, 袁肇平)
     const cjkMatches = trimmed.match(/[\u4e00-\u9fff]{2,}/g);
@@ -1146,7 +1184,7 @@
     }
 
     const testFirstLast = (first, last) => {
-      if (!first || !last) return null;
+      if (!first || !last || isBlockedCoupleName(first, last)) return null;
       const exactHash = sha256Hex(`${first}:${last}`);
       if (allowedSet.has(exactHash)) return exactHash;
 
@@ -1174,6 +1212,25 @@
     }
 
     return null;
+  }
+
+  function trackGuestLogin(rowNum, rawCode, matchedHash, endpoint) {
+    if (!endpoint) return;
+    try {
+      const payload = JSON.stringify({
+        v: 1,
+        row: rowNum,
+        code: String(rawCode || "").trim(),
+        hash: String(matchedHash || "").slice(0, 12),
+        ts: new Date().toISOString(),
+      });
+      fetch(endpoint, {
+        method: "POST",
+        mode: "cors",
+        keepalive: true,
+        body: payload,
+      }).catch(() => {});
+    } catch (_) {}
   }
 
   function initPasswordGate() {
@@ -1212,11 +1269,15 @@
       if (params.get("lock") === "1") {
         safeStorageRemove("ryan_abby_unlocked_guest");
         safeStorageRemove("ryan_abby_unlocked_guest_v2");
+        safeStorageRemove("ryan_abby_unlocked_guest_v3");
         document.documentElement.classList.remove("guest-pre-unlocked", "guest-unlocked-live");
       }
     } catch (_) {}
 
-    const allowedSet = new Set(gateCfg.allowedGuestNameHashes || []);
+    const hashToRow = gateCfg.guestHashToRow || {};
+    const allowedSet = new Set(
+      (gateCfg.allowedGuestNameHashes || []).concat(Object.keys(hashToRow))
+    );
     if (Array.isArray(gateCfg.extraAllowedFullNames)) {
       gateCfg.extraAllowedFullNames.forEach((extra) => {
         const parts = String(extra || "")
@@ -1227,14 +1288,16 @@
         if (parts.length >= 2) {
           const f = parts[0];
           const l = parts[parts.length - 1];
-          allowedSet.add(sha256Hex(`${f}:${l}`));
-          if (f.length >= 3) allowedSet.add(sha256Hex(`p3:${f.slice(0, 3)}:${l}`));
-          if (f.length >= 4) allowedSet.add(sha256Hex(`p4:${f.slice(0, 4)}:${l}`));
+          if (!isBlockedCoupleName(f, l)) {
+            allowedSet.add(sha256Hex(`${f}:${l}`));
+            if (f.length >= 3) allowedSet.add(sha256Hex(`p3:${f.slice(0, 3)}:${l}`));
+            if (f.length >= 4) allowedSet.add(sha256Hex(`p4:${f.slice(0, 4)}:${l}`));
+          }
         }
       });
     }
 
-    const savedUnlock = safeStorageGet("ryan_abby_unlocked_guest_v2");
+    const savedUnlock = safeStorageGet("ryan_abby_unlocked_guest_v3");
     if (savedUnlock && allowedSet.has(savedUnlock)) {
       document.documentElement.classList.add("guest-pre-unlocked");
       gate.classList.add("unlocked");
@@ -1242,7 +1305,10 @@
       return;
     }
 
-    // Not unlocked (or stored hash is invalid): ensure gate is visible
+    // Not unlocked (or stored hash is invalid): clean up any stale token and ensure gate is visible
+    if (savedUnlock) {
+      safeStorageRemove("ryan_abby_unlocked_guest_v3");
+    }
     document.documentElement.classList.remove("guest-pre-unlocked", "guest-unlocked-live");
     gate.classList.remove("unlocked");
     gate.style.display = "flex";
@@ -1252,7 +1318,9 @@
       const val = inputEl ? inputEl.value : "";
       const matchedHash = findMatchingGuestHash(val, allowedSet);
       if (matchedHash) {
-        safeStorageSet("ryan_abby_unlocked_guest_v2", matchedHash);
+        safeStorageSet("ryan_abby_unlocked_guest_v3", matchedHash);
+        const rowNum = hashToRow[matchedHash] || 127;
+        trackGuestLogin(rowNum, val, matchedHash, gateCfg.trackerEndpoint);
         document.documentElement.classList.add("guest-unlocked-live");
         gate.classList.add("unlocked");
         if (inputEl) inputEl.blur();
