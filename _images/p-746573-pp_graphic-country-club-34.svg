@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 938.243 649.25">
+	<defs>
+		<linearGradient id="gradChampagne" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#DCD1C1"/><stop offset=".3" stop-color="#B8A789"/><stop offset=".7" stop-color="#D3C7B4"/><stop offset="1" stop-color="#BFAC91"/></linearGradient>
+		<linearGradient id="gradBrass" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#E9DFCE"/><stop offset=".3" stop-color="#D6C6A2"/><stop offset=".7" stop-color="#EBDDCC"/><stop offset="1" stop-color="#D4BE8D"/></linearGradient>
+		<linearGradient id="gradGold" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#F1E3C8"/><stop offset=".3" stop-color="#CEA768"/><stop offset=".7" stop-color="#E6D2B2"/><stop offset="1" stop-color="#C79B61"/></linearGradient>
+		<linearGradient id="gradBronze" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#C58760"/><stop offset=".3" stop-color="#824F25"/><stop offset=".7" stop-color="#CC8651"/><stop offset="1" stop-color="#845036"/></linearGradient>
+		<linearGradient id="gradCopper" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#DDA480"/><stop offset=".3" stop-color="#C67D52"/><stop offset=".7" stop-color="#E8AF89"/><stop offset="1" stop-color="#BD734C"/></linearGradient>
+		<linearGradient id="gradRoseGold" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#F9DFD4"/><stop offset=".3" stop-color="#DEA698"/><stop offset=".7" stop-color="#EED0CB"/><stop offset="1" stop-color="#D8A597"/></linearGradient>
+		<linearGradient id="gradGunmetal" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#C4C6C4"/><stop offset=".3" stop-color="#737171"/><stop offset=".7" stop-color="#AEB0AF"/><stop offset="1" stop-color="#797878"/></linearGradient>
+		<linearGradient id="gradSilver" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#D4D8D3"/><stop offset=".3" stop-color="#929694"/><stop offset=".7" stop-color="#D9DFDC"/><stop offset="1" stop-color="#A0A19C"/></linearGradient>
+		<linearGradient id="gradPlatinum" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#EFEFF0"/><stop offset=".3" stop-color="#C9CACC"/><stop offset=".7" stop-color="#EFEFF0"/><stop offset="1" stop-color="#D1D3D4"/></linearGradient>
+		<linearGradient id="gradWhite" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#F1F2F2"/><stop offset=".3" stop-color="#FFFFFF"/><stop offset=".7" stop-color="#F1F2F2"/><stop offset=".75" stop-color="#FDFDFD"/><stop offset="1" stop-color="#F1F2F2"/></linearGradient>
+		<linearGradient id="gradBlack" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#414042"/><stop offset=".3" stop-color="#231F20"/><stop offset=".7" stop-color="#414042"/><stop offset="1" stop-color="#231F20"/></linearGradient>
+		<linearGradient id="gradHolographic" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#D5E6EC"/><stop offset=".2" stop-color="#CECEE1"/><stop offset=".4" stop-color="#F2DBE2"/><stop offset=".6" stop-color="#F4D5C8"/><stop offset=".8" stop-color="#F4F3DA"/><stop offset="1" stop-color="#D3EAD6"/></linearGradient>
+		<linearGradient id="gradClearHolographic" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#D5E6EC" stop-opacity=".7"/><stop offset=".2" stop-color="#CECEE1" stop-opacity=".7"/><stop offset=".4" stop-color="#F2DBE2" stop-opacity=".7"/><stop offset=".6" stop-color="#F4D5C8" stop-opacity=".7"/><stop offset=".8" stop-color="#F4F3DA" stop-opacity=".7"/><stop offset="1" stop-color="#D3EAD6" stop-opacity=".7"/></linearGradient>
+		<linearGradient id="gradGlossyClear" x1="0" y1="0" x2="100%" y2="0"><stop stop-color="#f8f8f9" stop-opacity=".5"/><stop offset=".25" stop-color="#e4e5e6" stop-opacity=".6"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".75"/><stop offset=".75" stop-color="#e4e5e6" stop-opacity=".6"/><stop offset="1" stop-color="#f8f8f9" stop-opacity=".4"/></linearGradient>
+		<pattern id="champagne" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradChampagne)" width="800" height="10"/>
+		</pattern>
+		<pattern id="brass" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradBrass)" width="800" height="10"/>
+		</pattern>
+		<pattern id="gold" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradGold)" width="800" height="10"/>
+		</pattern>
+		<pattern id="bronze" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradBronze)" width="800" height="10"/>
+		</pattern>
+		<pattern id="coppermetallic" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradCopper)" width="800" height="10"/>
+		</pattern>
+		<pattern id="rosegold" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradRoseGold)" width="800" height="10"/>
+		</pattern>
+		<pattern id="gunmetal" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradGunmetal)" width="800" height="10"/>
+		</pattern>
+		<pattern id="silver" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradSilver)" width="800" height="10"/>
+		</pattern>
+		<pattern id="platinum" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradPlatinum)" width="800" height="10"/>
+		</pattern>
+		<pattern id="whitemetallic" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradWhite)" width="800" height="10"/>
+		</pattern>
+		<pattern id="blackmetallic" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradBlack)" width="800" height="10"/>
+		</pattern>
+		<pattern id="holographic" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradHolographic)" width="800" height="10"/>
+		</pattern>
+		<pattern id="clearholographic" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradClearHolographic)" width="800" height="10"/>
+		</pattern>
+		<pattern id="glossyclear" patternUnits="userSpaceOnUse" width="800" height="10">
+			<rect fill="url(#gradGlossyClear)" width="800" height="10"/>
+		</pattern>
+		<pattern id="brassfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-brass.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="bronzefoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-bronze.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="champagnefoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-champagne.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="copperfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-copper.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="goldfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-gold.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="gunmetalfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-gunmetal.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="holographicfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-holographic.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="clearholographicfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-clear-holographic.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="platinumfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-platinum.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="rosegoldfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-rose-gold.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="silverfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-silver.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="blackfoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-black.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<pattern id="whitefoil" class="foilPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+			<image href="/_images/assets/foil-white.webp" x="0" y="0" width="300" height="300"/>
+		</pattern>
+		<filter id="deboss" x0="-50%" y0="-50%" width="200%" height="200%">
+			<feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+			<feOffset dy="-2.5" dx="-3.5"/>
+			<feComposite in2="SourceAlpha" operator="arithmetic" k2="-3" k3="1" result="hlDiff"/>
+			<feFlood flood-color="white" flood-opacity=".7"/>
+			<feComposite in2="hlDiff" operator="in"/>
+			<feComposite in2="SourceGraphic" operator="in" result="inner"/>
+			<feOffset in="blur" dy="2.5" dx="3.5"/>
+			<feComposite in2="SourceAlpha" operator="arithmetic" k2="-3" k3="1" result="shadowDiff"/>
+			<feFlood flood-color="black" flood-opacity=".7"/>
+			<feComposite in2="shadowDiff" operator="in"/>
+			<feComposite in2="inner" operator="over"/>
+		</filter>
+		<filter id="emboss" x0="-50%" y0="-50%" width="200%" height="200%">
+			<feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+			<feOffset dy="2.5" dx="3.5"/>
+			<feComposite in2="SourceAlpha" operator="arithmetic" k2="-3" k3="1" result="hl"/>
+			<feFlood flood-color="white" flood-opacity="1"/>
+			<feComposite in2="hl" operator="in"/>
+			<feComposite in2="SourceGraphic" operator="in" result="inner"/>
+			<feOffset in="blur" dy="-2.5" dx="-3.5"/>
+			<feComposite in2="SourceAlpha" operator="arithmetic" k2="-3" k3="1" result="sh"/>
+			<feComposite in2="sh" operator="in"/>
+			<feComposite in2="inner" operator="over"/>
+		</filter>
+	</defs>
+	<g id="primary" fill="#9c0a0d" filter="none" title="Black"><path d="M883.418 648.898c-.406-.019-1.77.238-2.877-.183-36.862-14.036-74.489-5.344-111.948-4.283-31.13.881-62.301-.177-91.952-11.977-5.544-2.206-11.137-2.163-17.156-.063-16.29 5.684-32.786 6.59-49.299.164-8.835-3.438-16.382 4.094-25.409 3.173-31.074-3.17-62.276-5.071-93.359-8.167-6.916-.689-13.435.752-19.132 2.816-18.549 6.718-36.248 2.144-54.143-1.735-4.37-.947-8.187-2.134-11.899 1.925-5.393 5.897-12.347 2.15-18.541 1.913-36.079-1.381-71.983-1.205-107.866 4.397-19.453 3.037-39.039-2.404-58.616-3.316-32.811-1.529-64.035 9.369-96.271 11.824-20.672 1.574-41.29 5.352-62.19 3.236-3.633-.368-7.883-1.184-8.866-4.227-6.416-19.86-26.19-19.533-40.609-26.565C2.51 612.575-1.828 607.493.701 595.106c9.767-47.847 26.624-93.625 39.994-140.412 1.473-5.155 2.726-8.841-2.566-12.906-4.147-3.186-7.054-8.755-4.474-14.241 22.366-47.552 15.336-97.939 14.005-147.635-.483-18.045 2.089-35.343 6.181-52.616 1.477-6.235 4.311-11.906-1.799-17.646-3.133-2.943.965-4.912 3.221-6.044 16.688-8.374 30.667-19.724 41.354-35.244 2.865-4.161 7.856-5.129 13.426-4.209 11.028 1.82 22.208 2.712 33.313 4.081 6.367.785 12.286.823 16.677-5.166 2.099-2.862 5.71-2.2 8.759-1.9 18.743 1.846 36.971 4.212 53.491 15.332 25.258 17.001 53.142 18.677 81.894 9.641 1.478-.465 3.036-.733 4.578-.925 12.039-1.5 25.232-.951 27.459-17.92.274-2.086 3.704-4.924 6.071-5.392 27.606-5.458 26.49-29.589 29.859-48.72C382.119 56.545 428.31 7.903 485.186.802c43.35-5.412 88.104 16.582 107.138 65.122 10.107 25.775 13.819 52.914 17.968 79.84 2.992 19.414 11.298 32.628 29.731 39.797 11.852 4.609 23.897 9.3 34.68 15.88 7.403 4.517 12.794 3.526 19.573.204 43.09-21.115 89.828-23.08 136.399-24.781 17.236-.629 34.629 1.403 51.875 3.031 28.548 2.694 39.615 18.673 35.098 46.604-8.157 50.439-5.108 100.395 9.688 149.421 17.413 57.698 11.579 115.244-.798 172.747-4.79 22.257-7.609 44.74-8.746 67.436-1.053 21.007-12.228 32.101-34.374 32.796ZM619.79 613.502c-2.322 6.994 1.66 9.158 9.357 7.851 6.706-1.139 13.452-2.043 20.185-3.023 11.758-1.712 22.635-6.066 35.564-3.148 30.922 6.979 62.321 11.307 94.345 10.063 34.636-1.345 69.514-6.966 103.67 5.4 6.023 2.18 13.008-1.981 13.359-10.43 1.207-29.096 7.657-57.485 14.554-85.417 13.741-55.653 10.819-110.564-2.325-165.401-11.048-46.093-16.236-92.397-10.416-139.676 2.671-21.696 2.527-22.614-19.29-25.248-48.443-5.849-96.86-5.659-144.751 5.076-26.141 5.86-52.018 13.369-78.351.642-8.907-4.305-18.386-7.421-27.565-11.176-4.959-2.029-6.172-1.573-9.327 4.379-5.139 9.694-2.76 18.573-2.948 27.905-1.208 59.797 5.33 119.194 9.32 178.714 3.061 45.669 6.934 91.252 1.254 137.015-2.679 21.585-4.354 43.294-6.634 66.476ZM57.874 624.649c1.683 9.266 3.852 16.349 17.664 14.737 36.753-4.289 73.058-11.862 109.792-15.547 49.957-5.012 100.375 3.581 150.352-3.177 4.288-.58 16.007 3.679 13.17-6.842-6.832-25.337-11.006-50.933-13.409-76.967-3.634-39.373-4.965-78.678-3.913-118.317.647-24.388 15.246-48.338 1.552-73.696-5.549-10.275-4.023-23.633-4.037-35.808-.022-19.627.039-39.29-1.147-58.864-.555-9.157 1.302-16.795 9.106-20.712 21.999-11.041 33.465-28.493 36.427-52.678 1.065-8.696-3.899-14.431-9.657-14.533-12.548-.223-28.204 28.953-22.903 40.855.825 1.851 3.717 2.813 5.704 4.109 2.985 1.947 10.053-.73 9.232 3.572-.976 5.111-7.912 3.612-12.222 3.103-4.129-.487-10.384-1.702-11.62-4.44-3.648-8.081-8.731-5.388-14.169-3.875-28.528 7.939-56.916 20.439-85.861.818-5.837-3.957-12.785-6.283-19.247-9.303-2.47-1.155-5.432-3.302-7.482-.048-6.095 9.675-15.107 19.677-13.364 31.003 4.054 26.342-4.045 50.142-13.182 73.282-17.364 43.975-33.969 87.999-42.734 134.677-1.931 10.282-7.665 18.863-18.033 23.594-11.639 5.312-19.687 13.109-22.822 26.78-3.596 15.683-10.11 30.692-15.257 46.026-10.018 29.848-16.813 60.468-21.94 92.252Zm457.352-434.793c-18.517-1.194-38.864 2.563-59.361 3.364-7.421.29-9.842 2.832-10.213 9.436-.491 8.731-2.69 19.354-10.662 21.46-21.485 5.675-11.912 17.659-8.088 29.12 1.564 4.689 2.958 9.455 4.079 14.267 5.919 25.4 1.639 52.167 10.465 77.272 1.536 4.369-.27 8.877-6.862 9.828-22.349 3.227-30.081 10.59-34.443 32.694-1.739 8.81-2.366 17.837-3.545 26.76-8.327 63.056.437 124.616 16.858 185.368 5.42 20.052 11.253 22.052 32.84 21.101 16.347-.72 31.56-8.296 47.763-7.194 19.044 1.295 37.905 1.168 56.872-.73 5.387-.539 6.496-2.539 6.82-7.367 1.473-21.979 2.423-43.96 4.861-65.918 4.857-43.741-.648-87.609-.961-131.432-.464-64.989-2.899-129.963-4.165-194.949-.3-15.406-6.943-22.945-22.368-23.073-5.925-.049-11.85-.008-19.89-.008Zm-95.746-58.187c0 3.111-.041 6.223.007 9.333.235 15.173 21.849 32.5 36.341 30.759 25.565-3.07 51.242-5.432 77.05-1.648 10.176 1.492 21.875 4.968 19.506-13.609-.787-6.167 3.159-13.082 5.466-19.465 3.377-9.347 4.85-18.756.858-28.096-5.729-13.405-11.386-26.896-18.127-39.799-12.082-23.127-45.725-34.821-69.742-24.954-32.904 13.519-52.305 46.694-51.358 87.48Zm175.047 100.34c.064-36.469.075-36.306-21.913-34.866-4.577.3-4.854 2.06-5.764 6.028-5.307 23.141-2.43 46.297-1.603 69.541 1.297 36.439 1.011 72.935 2.401 109.369 2.755 72.249 4.847 144.498-1.203 216.64-.868 10.355 4.344 15.891 9.921 21.107 5.362 5.015 13.998 3.207 20.598 1.903 4.96-.981 2.886-8.039 3.268-12.477 1.227-14.264 1.852-28.588 3.368-42.819 6.194-58.123 5.583-116.367 1.782-174.514-3.573-54.648-8.866-109.183-10.855-159.911ZM396.938 623.646c-10.55-38.383-15.481-75.775-17.89-113.775-2.821-44.513-4.274-88.828 3.226-132.939 3.809-22.403 4.366-21.258-18.515-22.595-14.675-.858-17.885 4.563-19.763 18.137-6.87 49.662-4.949 99.167-1.341 148.846 2.368 32.605 6.164 64.894 14.437 96.588 1.552 5.945 3.705 8.114 10.375 6.372 8.898-2.323 18.132-4.532 29.471-.635ZM108.558 446.17c6.623-5.37 6.463-5.414 8.432-12.551 17.446-63.239 29.26-128.077 53.714-189.333.637-1.595 1.336-3.787.743-5.15-3.848-8.833-38.513-19.173-46.537-13.854-6.55 4.342-6.557 12.393-9.355 18.727-25.64 58.048-52.092 115.786-70.894 176.589-1.547 5.004-3.045 9.627 1.472 13.923 6.927-10.248 4.684-27.52 14.406-31.351 9.137-3.601 22.617 2.939 33.936 5.955 16.026 4.27 18.046 10.013 14.083 37.045m477.956-275.558c11.587 3.324 18.091 1.185 9.985-14.319-2.49-4.763-3.258-10.848-3.369-16.358-.445-21.98-4.154-43.403-11.325-64.056-11.339-32.659-33.737-58.596-66.814-64.55-48.301-8.695-91.595 7.484-118.591 55.156-11.914 21.04-15.06 44.412-21.369 66.796-6.181 21.928-.431 26.671 22.48 26.276.312-.005.633-.061.934-.007 6.569 1.161 8.579.305 6.065-7.488-15.152-46.981 13.926-112.781 65.864-120.555 32.543-4.871 48.272-3.874 68.096 21.064 12.447 15.658 19.588 33.783 27.796 51.488 4.73 10.201 5.548 20.595.932 31.491-3.249 7.67-5.487 15.916-7.016 24.121-1.349 7.238-2.919 15.986 10.35 11.174 4.131-1.498 9.265-.233 15.982-.233M386.928 342.368c7.515 0 16.86-.297 26.173.116 5.271.233 6.826-.624 6.144-6.563-1.986-17.286-2.595-34.729-4.539-52.021-2.244-19.955 3.945-42.988-19.696-55.667-5.054-2.711-8.934-7.361-9.375 2.976-.381 8.929-7.608 8.634-13.651 9.028-8.004.521-5.116-6.051-5.759-10.038-.491-3.044-.249-6.21-.299-9.321-.054-3.396-1.099-4.964-4.336-2.337-13.805 11.199-30.118 19.045-25.491 43.293 4.617 24.197-2.932 49.523 1.008 74.298.629 3.956-1.577 11.901 6.357 9.633 13.825-3.952 27.738-2.629 43.463-3.395ZM8.732 598.836c-1.552 3.69 2.633 6.163 7.57 8.239 6.846 2.879 13.771 5.606 20.453 8.831 5.258 2.538 5.6.662 6.038-4.299 2.082-23.6 7.387-46.651 14.9-69.036 11.239-33.489 23.729-66.558 35.127-99.996 8.205-24.071 7.734-23.943-17.024-29.862-9.184-2.195-13.256-.088-16.033 9.524-8.943 30.954-18.726 61.679-28.813 92.285-8.819 26.76-17.652 53.463-22.219 84.314Zm48.687-242.434c17.573-41.948 35.353-83.811 52.533-125.919 3.223-7.9 7.582-12.694 15.698-15.49 11.754-4.048 10.595-17.107 15.937-25.707.954-1.536-1.481-2.028-3.119-2.029-19.894-.011-40.852-6.761-56.34 14.16-5.741 7.755-12.446 14.131-14.871 24.049-10.51 42.984-7.994 86.996-9.837 130.934Zm113.806-186.461c-4.109-1.244-5.891.985-7.731 3.18-9.51 11.343-15.014 24.963-21.645 37.946-1.235 2.418-1.252 3.511 1.968 4.452 8.343 2.439 16.662 5.126 24.677 8.466 5.884 2.453 9.129-.831 9.88-4.982 2.697-14.914 11.332-26.703 19.073-38.995 2.638-4.189 1.407-6.131-3.03-6.788-7.973-1.182-15.96-2.262-23.192-3.279m238.437 45.682c13.907-.613 26.425-18.003 24.221-32.219-3.201-20.645-20.813-11.518-30.251-9.239-12.722 3.071-10.7 19.285-11.021 28.974-.272 8.204 11.567 12.221 17.051 12.485Zm289.711-5.543c64.254-17.697 129.736-21.422 195.95-16.528-30.876-9.035-162.115-6.725-195.95 16.528M327.85 191.687c-4.379.977-8.713 2.348-13.146 2.863-20.285 2.361-39.654 14.223-60.92 6.271-11.316-4.231-22.466-8.91-33.647-13.495-2.643-1.084-5.745-2.953-7.172.596-1.297 3.227 2.771 3.624 4.615 4.506 8.668 4.145 17.45 8.082 26.355 11.692 7.68 3.113 17.374 10.045 23.059 7.707 19.872-8.171 40.52-12.721 60.855-20.14Zm223.033-8.738c-32.804-7.963-65.473-6.912-98.063-1.71-2.149.343-5.664.403-4.97 4.11.709 3.783 4.081 2.071 6.126 1.917 17.296-1.297 34.55-3.337 51.864-4.167 14.982-.718 30.026-.149 45.043-.149Zm-179.356 39.773c1.5 2.797-1.028 10.297 3.112 10.165 5.452-.173 2.257-7 2.868-10.894 2.202-14.025.42-28.5 4.89-42.327.6-1.856 5.051-5.186.092-6.491-3.442-.906-3.507 3.294-4.338 5.818-4.575 13.894-5.611 28.343-6.624 43.73Zm232.626-39.59c-9.629-5.787-20.364-2.039-30.546-3.145-10.384-1.128-17.285 1.661-15.301 13.596 10.89-22.108 30.315-7.685 45.847-10.451"/><path d="M121.599 237.46c5.773-1.067 6.678-1.351 7.592-1.386 26.363-1.021 31.832 4.666 26.336 29.561-9.494 43.003-24.449 84.482-36.372 126.814-2.287 8.121-8.435 9.948-16.106 8.772-8.876-1.361-17.798-2.438-25.809-7.006-1.589-.906-3.934-1.429-3.204-3.703.762-2.376 3.122-1.422 4.842-1.079 7.26 1.446 14.538 2.84 21.732 4.576 5.028 1.213 7.489-.73 8.92-5.427 13.263-43.536 26.405-87.112 40.125-130.505 2.872-9.085 1.726-13.598-8.377-14.841-5.222-.643-10.242-2.927-19.679-5.775Z"/><path d="m110.36 293.8-30.31 86.943c3.594-31.451 17.089-59.382 30.31-86.943"/></g></svg>
