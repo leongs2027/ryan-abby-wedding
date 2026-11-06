@@ -985,6 +985,11 @@
           err.textContent = "";
           err.classList.remove("visible");
         }
+        const rickRoll = document.getElementById("guestGateRickRoll");
+        if (rickRoll) {
+          rickRoll.innerHTML = "";
+          rickRoll.classList.remove("visible");
+        }
         panel.classList.remove("open");
       });
     }
@@ -1130,6 +1135,33 @@
     return false;
   }
 
+  function isCoupleNameAttempt(rawInput) {
+    const trimmed = String(rawInput || "").trim();
+    if (!trimmed) return false;
+    const rawWords = trimmed
+      .split(/[\s,&/+.;:()'"-]+/)
+      .map(normalizeNamePart)
+      .filter((w) => w && !IGNORED_NAME_TITLES.has(w));
+    if (rawWords.length >= 2) {
+      for (let i = 0; i < rawWords.length; i++) {
+        for (let j = 0; j < rawWords.length; j++) {
+          if (i !== j && isBlockedCoupleName(rawWords[i], rawWords[j])) {
+            return true;
+          }
+        }
+      }
+    }
+    const compact = normalizeNamePart(trimmed);
+    return (
+      compact === "ryanleong" ||
+      compact === "abbyjin" ||
+      compact === "abigailjin" ||
+      compact === "abbyleong" ||
+      compact === "abigailleong" ||
+      compact === "ryanjin"
+    );
+  }
+
   function findMatchingGuestHash(rawInput, allowedSet) {
     const trimmed = String(rawInput || "").trim();
     if (!trimmed) return null;
@@ -1254,7 +1286,15 @@
     const btnEl = document.getElementById("guestGateSubmitBtn");
     const btnTextEl = document.getElementById("guestGateBtnText");
     const errEl = document.getElementById("guestGateError");
+    const rickRollEl = document.getElementById("guestGateRickRoll");
     const formEl = document.getElementById("guestGateForm");
+
+    const clearRickRoll = () => {
+      if (rickRollEl) {
+        rickRollEl.innerHTML = "";
+        rickRollEl.classList.remove("visible");
+      }
+    };
 
     if (monoEl && gateCfg.monogram) monoEl.textContent = gateCfg.monogram;
     if (titleEl && gateCfg.title) titleEl.textContent = gateCfg.title;
@@ -1318,6 +1358,7 @@
       const val = inputEl ? inputEl.value : "";
       const matchedHash = findMatchingGuestHash(val, allowedSet);
       if (matchedHash) {
+        clearRickRoll();
         safeStorageSet("ryan_abby_unlocked_guest_v3", matchedHash);
         const rowNum = hashToRow[matchedHash] || 127;
         trackGuestLogin(rowNum, val, matchedHash, gateCfg.trackerEndpoint);
@@ -1330,6 +1371,24 @@
         }, 420);
       } else {
         if (inputEl) inputEl.classList.add("error");
+        if (isCoupleNameAttempt(val)) {
+          trackGuestLogin(
+            127,
+            "[Rickrolled] " + String(val || "").trim(),
+            "rickroll",
+            gateCfg.trackerEndpoint
+          );
+          if (errEl) {
+            errEl.innerHTML = `Nice try! Please enter <strong>your own</strong> first and last name &#128521;`;
+            errEl.classList.add("visible");
+          }
+          if (rickRollEl) {
+            rickRollEl.innerHTML = `<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&amp;playsinline=1&amp;rel=0" title="Rick Astley - Never Gonna Give You Up" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+            rickRollEl.classList.add("visible");
+          }
+          return;
+        }
+        clearRickRoll();
         if (errEl) {
           const email = (cfg.meta && cfg.meta.contactEmail) || "leongs2027@gmail.com";
           const rawTokens = String(val || "")
