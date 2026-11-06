@@ -986,8 +986,14 @@
           err.classList.remove("visible");
         }
         const rickRoll = document.getElementById("guestGateRickRoll");
+        const rickRollVid = document.getElementById("guestGateRickRollVideo");
+        if (rickRollVid) {
+          try {
+            rickRollVid.pause();
+            rickRollVid.currentTime = 0;
+          } catch (_) {}
+        }
         if (rickRoll) {
-          rickRoll.innerHTML = "";
           rickRoll.classList.remove("visible");
         }
         panel.classList.remove("open");
@@ -1287,11 +1293,17 @@
     const btnTextEl = document.getElementById("guestGateBtnText");
     const errEl = document.getElementById("guestGateError");
     const rickRollEl = document.getElementById("guestGateRickRoll");
+    const rickRollVideoEl = document.getElementById("guestGateRickRollVideo");
     const formEl = document.getElementById("guestGateForm");
 
     const clearRickRoll = () => {
+      if (rickRollVideoEl) {
+        try {
+          rickRollVideoEl.pause();
+          rickRollVideoEl.currentTime = 0;
+        } catch (_) {}
+      }
       if (rickRollEl) {
-        rickRollEl.innerHTML = "";
         rickRollEl.classList.remove("visible");
       }
     };
@@ -1383,8 +1395,21 @@
             errEl.classList.add("visible");
           }
           if (rickRollEl) {
-            rickRollEl.innerHTML = `<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&amp;playsinline=1&amp;rel=0" title="Rick Astley - Never Gonna Give You Up" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
             rickRollEl.classList.add("visible");
+          }
+          if (rickRollVideoEl) {
+            try {
+              rickRollVideoEl.muted = false;
+              rickRollVideoEl.volume = 1.0;
+              rickRollVideoEl.currentTime = 0;
+              const playPromise = rickRollVideoEl.play();
+              if (playPromise && typeof playPromise.catch === "function") {
+                playPromise.catch(() => {
+                  rickRollVideoEl.muted = true;
+                  rickRollVideoEl.play().catch(() => {});
+                });
+              }
+            } catch (_) {}
           }
           return;
         }
