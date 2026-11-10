@@ -415,8 +415,13 @@
       main.classList.remove("singlePage");
       document.querySelectorAll("main > section").forEach((sec) => {
         const slug = sec.getAttribute("data-page");
+        sec.classList.remove("v2-page-entering", "v2-page-exiting");
         if (slug === targetSlug) {
           sec.style.display = slug === "gallery" ? "flex" : "block";
+          if (!skipHistory && document.body.classList.contains("motion-test-v2")) {
+            void sec.offsetWidth;
+            sec.classList.add("v2-page-entering");
+          }
         } else {
           sec.style.display = "none";
         }
@@ -1521,91 +1526,197 @@
   }
 
   // =========================================================================
-  // 7C. Motion Test Batch 1 (Preview Mode via ?test=1 or x20web)
+  // 7C. Live Motion V1 (Always Active) + Motion Test Batch 2 (?test=2 Preview)
   // =========================================================================
   let iconObserver = null;
   let galleryObserver = null;
+  let v2RevealObserver = null;
+  let v2StickyPrepared = false;
 
-  function refreshMotionTestObservers() {
-    if (!document.body.classList.contains("motion-test-v1")) return;
+  function setupStickySplitSections() {
+    if (v2StickyPrepared) return;
+    v2StickyPrepared = true;
 
-    // 1A. Observe Line-Art Illustrations (.iconImage)
-    if (!iconObserver && "IntersectionObserver" in window) {
-      iconObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("motion-in-view");
-            }
-          });
-        },
-        { threshold: 0.18, rootMargin: "0px 0px -30px 0px" }
-      );
+    // 1. In #ourStoryGrid, group each 2-column chapter pair into its own .section.split.v2-sticky-split
+    //    so each chapter's photo pins for its own chapter and then releases cleanly into the next chapter.
+    const storyGrid = document.getElementById("ourStoryGrid");
+    if (storyGrid) {
+      const children = Array.from(storyGrid.querySelectorAll(":scope > .sectionCont"));
+      if (children.length === 8) {
+        const parent = storyGrid.parentNode;
+        for (let i = 0; i < children.length; i += 2) {
+          const pairRow = document.createElement("div");
+          pairRow.className = "section split v2-sticky-split story-chapter-row";
+          if (i === 0) pairRow.id = "ourStoryGrid";
+          const c1 = children[i];
+          const c2 = children[i + 1];
+          const c1HasPhoto = !!c1.querySelector(".bgBox");
+          if (c1HasPhoto) {
+            c1.classList.add("v2-sticky-pin");
+            c2.classList.add("v2-sticky-scroll");
+          } else {
+            c2.classList.add("v2-sticky-pin");
+            c1.classList.add("v2-sticky-scroll");
+          }
+          pairRow.appendChild(c1);
+          pairRow.appendChild(c2);
+          parent.insertBefore(pairRow, storyGrid);
+        }
+        storyGrid.remove();
+      }
     }
 
-    document.querySelectorAll(".sectionCont .iconImage").forEach((el) => {
-      if (!el.classList.contains("motion-ready")) {
-        el.classList.add("motion-ready");
-      }
-      if (iconObserver) {
-        iconObserver.observe(el);
-      } else {
-        el.classList.add("motion-in-view");
-      }
-    });
-
-    // 2. Observe Gallery Cards (#sec-gallery > .section) with column stagger
-    if (!galleryObserver && "IntersectionObserver" in window) {
-      galleryObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("gallery-in-view");
-            }
-          });
-        },
-        { threshold: 0.1, rootMargin: "0px 0px -20px 0px" }
-      );
-    }
-
-    const galleryItems = document.querySelectorAll("#sec-gallery > .section");
-    galleryItems.forEach((item, idx) => {
-      const colIdx = idx % 3;
-      item.style.setProperty("--gallery-stagger", `${colIdx * 85}ms`);
-      if (!item.classList.contains("gallery-card-ready")) {
-        item.classList.add("gallery-card-ready");
-      }
-      if (galleryObserver) {
-        galleryObserver.observe(item);
-      } else {
-        item.classList.add("gallery-in-view");
+    // 2. In #sec-details, tag each 2-column .section.split so the title/illustration side pins
+    //    while the multi-item hotel/shuttle/airport list scrolls past it.
+    document.querySelectorAll("#sec-details > .section.split").forEach((splitEl) => {
+      const cols = Array.from(splitEl.querySelectorAll(":scope > .sectionCont"));
+      if (cols.length === 2) {
+        splitEl.classList.add("v2-sticky-split");
+        const firstHasIcon = !!cols[0].querySelector(".iconImage");
+        if (firstHasIcon) {
+          cols[0].classList.add("v2-sticky-pin");
+          cols[1].classList.add("v2-sticky-scroll");
+        } else {
+          cols[1].classList.add("v2-sticky-pin");
+          cols[0].classList.add("v2-sticky-scroll");
+        }
       }
     });
   }
 
-  function initMotionTestBatch1() {
-    let isTestRequested = false;
-    try {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("test") === "1") {
-        isTestRequested = true;
-        safeStorageSet("ryan_abby_motion_test", "1");
-      } else if (params.get("test") === "0") {
-        safeStorageRemove("ryan_abby_motion_test");
-        isTestRequested = false;
-      } else if (
-        safeStorageGet("ryan_abby_motion_test") === "1" ||
-        window.location.hostname.includes("x20web") ||
-        window.location.hostname === "localhost"
-      ) {
-        isTestRequested = true;
+  function updateV2ParallaxFrames() {
+    if (!document.body.classList.contains("motion-test-v2")) return;
+    const vh = window.innerHeight || 800;
+
+    document
+      .querySelectorAll(
+        "#sec-our-story .sectionCont .imgCont .bgBox, #sec-rsvp > .imgCont .bgBox"
+      )
+      .forEach((bg) => {
+        const frame = bg.parentElement;
+        if (!frame || frame.offsetParent === null) return;
+        const rect = frame.getBoundingClientRect();
+        if (rect.bottom < -100 || rect.top > vh + 100) return;
+        const centerOffset = (rect.top + rect.height * 0.5 - vh * 0.5) / (vh * 0.65);
+        const clamped = Math.max(-1.2, Math.min(1.2, centerOffset));
+        const translateY = (clamped * -38).toFixed(1);
+        const scale = (1.085 - Math.min(1, Math.abs(clamped)) * 0.045).toFixed(3);
+        bg.style.transform = `translate3d(0, ${translateY}px, 0) scale(${scale})`;
+      });
+  }
+
+  function refreshMotionTestObservers() {
+    // --- Batch 1 (Live Default): Line-Art Float + Gallery Cascade ---
+    if (document.body.classList.contains("motion-test-v1")) {
+      if (!iconObserver && "IntersectionObserver" in window) {
+        iconObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("motion-in-view");
+              }
+            });
+          },
+          { threshold: 0.18, rootMargin: "0px 0px -30px 0px" }
+        );
       }
-    } catch (_) {}
 
-    if (!isTestRequested) return;
+      document.querySelectorAll(".sectionCont .iconImage").forEach((el) => {
+        if (!el.classList.contains("motion-ready")) {
+          el.classList.add("motion-ready");
+        }
+        if (iconObserver) {
+          iconObserver.observe(el);
+        } else {
+          el.classList.add("motion-in-view");
+        }
+      });
 
+      if (!galleryObserver && "IntersectionObserver" in window) {
+        galleryObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("gallery-in-view");
+              }
+            });
+          },
+          { threshold: 0.1, rootMargin: "0px 0px -20px 0px" }
+        );
+      }
+
+      const galleryItems = document.querySelectorAll("#sec-gallery > .section");
+      galleryItems.forEach((item, idx) => {
+        const colIdx = idx % 3;
+        item.style.setProperty("--gallery-stagger", `${colIdx * 85}ms`);
+        if (!item.classList.contains("gallery-card-ready")) {
+          item.classList.add("gallery-card-ready");
+        }
+        if (galleryObserver) {
+          galleryObserver.observe(item);
+        } else {
+          item.classList.add("gallery-in-view");
+        }
+      });
+    }
+
+    // --- Batch 2 (?test=2 Preview): Choreographed Scroll-Reveal + Parallax + Sticky ---
+    if (document.body.classList.contains("motion-test-v2")) {
+      setupStickySplitSections();
+
+      if (!v2RevealObserver && "IntersectionObserver" in window) {
+        v2RevealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const el = entry.target;
+              if (entry.isIntersecting) {
+                el.classList.add("v2-in-view");
+                el.classList.remove("v2-above-view");
+              } else {
+                const rect = entry.boundingClientRect;
+                if (rect.bottom < 90) {
+                  // Scrolled above viewport -> bidirectional upward fade/scale
+                  el.classList.remove("v2-in-view");
+                  el.classList.add("v2-above-view");
+                } else if (rect.top > (window.innerHeight || 800) - 40) {
+                  // Below viewport -> ready to glide up again on scroll down
+                  el.classList.remove("v2-in-view", "v2-above-view");
+                }
+              }
+            });
+          },
+          { threshold: [0, 0.12, 0.88], rootMargin: "-50px 0px -35px 0px" }
+        );
+      }
+
+      document
+        .querySelectorAll(
+          "#sec-wedding-day .textCont, #sec-weekend-events .textCont, #sec-our-story .textCont, #sec-details .textCont, #sec-faqs .textCont, #sec-registry .textCont"
+        )
+        .forEach((tc) => {
+          const children = Array.from(tc.children).filter(
+            (ch) => !ch.classList.contains("iconImage") && ch.textContent.trim() !== "-"
+          );
+          children.forEach((ch, idx) => {
+            ch.style.setProperty("--v2-delay", `${Math.min(idx, 4) * 85}ms`);
+            if (!ch.classList.contains("v2-reveal-item")) {
+              ch.classList.add("v2-reveal-item");
+            }
+            if (v2RevealObserver) {
+              v2RevealObserver.observe(ch);
+            } else {
+              ch.classList.add("v2-in-view");
+            }
+          });
+        });
+
+      requestAnimationFrame(updateV2ParallaxFrames);
+    }
+  }
+
+  function initMotionTestBatch1() {
+    // Batch 1 is now permanently enabled on the live site!
     document.body.classList.add("motion-test-v1");
-    refreshMotionTestObservers();
 
     // Bind 3D perspective mouse tilt on Gallery cards (desktop only)
     document.querySelectorAll("#sec-gallery .section .imgCont").forEach((card) => {
@@ -1629,83 +1740,116 @@
       });
     });
 
-    // Inject floating Motion Test Lab bar for easy 1-click testing
+    // Check if Test Batch 2 (Features 1-4) is requested via ?test=2 or x20web
+    let isTestV2Requested = false;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tVal = params.get("test");
+      if (tVal === "2") {
+        isTestV2Requested = true;
+        safeStorageSet("ryan_abby_motion_test_v2", "1");
+      } else if (tVal === "0") {
+        safeStorageRemove("ryan_abby_motion_test");
+        safeStorageRemove("ryan_abby_motion_test_v2");
+        isTestV2Requested = false;
+      } else if (
+        safeStorageGet("ryan_abby_motion_test_v2") === "1" ||
+        window.location.hostname.includes("x20web") ||
+        window.location.hostname === "localhost"
+      ) {
+        isTestV2Requested = true;
+      }
+    } catch (_) {}
+
+    if (isTestV2Requested) {
+      document.body.classList.add("motion-test-v2");
+      let ticking = false;
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(() => {
+              updateV2ParallaxFrames();
+              ticking = false;
+            });
+          }
+        },
+        { passive: true }
+      );
+    }
+
+    refreshMotionTestObservers();
+
+    if (!isTestV2Requested) return;
+
+    // Inject floating Motion Test 2 Lab bar for easy 1-click testing of Features 1-4
     const lab = document.createElement("div");
     lab.id = "motionTestLab";
     lab.className = "visible";
     lab.innerHTML = `
-      <span class="mtl-badge">&#10024; Motion Test 1</span>
-      <button type="button" class="mtl-btn" data-demo="1a">1A. Line-Art Float</button>
-      <button type="button" class="mtl-btn" data-demo="1b">1B. Button Sweep</button>
-      <button type="button" class="mtl-btn" data-demo="1c">1C. Spring FAQs</button>
-      <button type="button" class="mtl-btn" data-demo="2">2. Gallery Cascade &amp; 3D Tilt</button>
-      <button type="button" class="mtl-btn mtl-toggle" id="mtlToggleBtn">Mode: Test ON</button>
+      <span class="mtl-badge">&#10024; Motion Test 2 (1&ndash;4)</span>
+      <button type="button" class="mtl-btn" data-demo="1">1. Scroll-Reveal Glide</button>
+      <button type="button" class="mtl-btn" data-demo="2">2. Photo Parallax &amp; Zoom</button>
+      <button type="button" class="mtl-btn" data-demo="3">3. Sticky Scrollytelling</button>
+      <button type="button" class="mtl-btn" data-demo="4">4. Tab Curtain Transition</button>
+      <button type="button" class="mtl-btn mtl-toggle" id="mtlToggleBtn">Mode: Test 1&ndash;4 ON</button>
     `;
     document.body.appendChild(lab);
 
     const toggleBtn = document.getElementById("mtlToggleBtn");
     if (toggleBtn) {
       toggleBtn.addEventListener("click", () => {
-        const enabled = document.body.classList.toggle("motion-test-v1");
-        toggleBtn.textContent = enabled ? "Mode: Test ON" : "Mode: Original (OFF)";
+        const enabled = document.body.classList.toggle("motion-test-v2");
+        toggleBtn.textContent = enabled ? "Mode: Test 1–4 ON" : "Mode: Live Site Only (OFF)";
         if (enabled) {
           refreshMotionTestObservers();
+        } else {
+          document.querySelectorAll(".bgBox").forEach((bg) => {
+            bg.style.transform = "";
+          });
         }
       });
     }
 
     lab.querySelectorAll(".mtl-btn[data-demo]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        if (!document.body.classList.contains("motion-test-v1")) {
-          document.body.classList.add("motion-test-v1");
-          if (toggleBtn) toggleBtn.textContent = "Mode: Test ON";
+        if (!document.body.classList.contains("motion-test-v2")) {
+          document.body.classList.add("motion-test-v2");
+          if (toggleBtn) toggleBtn.textContent = "Mode: Test 1–4 ON";
         }
         lab.querySelectorAll(".mtl-btn[data-demo]").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
 
         const demo = btn.getAttribute("data-demo");
-        if (demo === "1a") {
+        if (demo === "1") {
           loadPage("wedding-day");
-          const icons = document.querySelectorAll("#sec-wedding-day .iconImage");
-          icons.forEach((ic) => {
-            ic.classList.remove("motion-in-view");
-          });
-          setTimeout(() => {
-            icons.forEach((ic) => ic.classList.add("motion-in-view"));
-          }, 120);
-        } else if (demo === "1b") {
-          loadPage("details");
-          setTimeout(() => {
-            const firstBtn = document.querySelector("#sec-details .button.outline");
-            if (firstBtn) {
-              const dest = Math.max(
-                0,
-                firstBtn.getBoundingClientRect().top + window.pageYOffset - window.innerHeight * 0.45
-              );
-              window.scrollTo({ top: dest, behavior: "smooth" });
-              setTimeout(() => {
-                firstBtn.classList.add("demo-hover-active");
-                setTimeout(() => firstBtn.classList.remove("demo-hover-active"), 1100);
-              }, 550);
-            }
-          }, 100);
-        } else if (demo === "1c") {
-          loadPage("faqs");
-          setTimeout(() => {
-            const firstH3 = document.querySelector("#sec-faqs .subsection h3");
-            if (firstH3) {
-              toggleFaqSubsection(firstH3, true);
-              setTimeout(() => toggleFaqSubsection(firstH3, false), 1400);
-              setTimeout(() => toggleFaqSubsection(firstH3, true), 2200);
-            }
-          }, 200);
-        } else if (demo === "2") {
-          loadPage("gallery");
-          const cards = document.querySelectorAll("#sec-gallery > .section");
-          cards.forEach((c) => c.classList.remove("gallery-in-view"));
+          const items = document.querySelectorAll("#sec-wedding-day .v2-reveal-item");
+          items.forEach((it) => it.classList.remove("v2-in-view", "v2-above-view"));
           setTimeout(() => {
             refreshMotionTestObservers();
           }, 120);
+        } else if (demo === "2") {
+          loadPage("our-story");
+          setTimeout(() => {
+            window.scrollTo({ top: 380, behavior: "smooth" });
+          }, 220);
+        } else if (demo === "3") {
+          loadPage("our-story");
+          setTimeout(() => {
+            const firstSplit = document.querySelector("#sec-our-story .v2-sticky-split");
+            if (firstSplit) {
+              const top = Math.max(0, firstSplit.getBoundingClientRect().top + window.pageYOffset - 99);
+              window.scrollTo({ top: top + 120, behavior: "smooth" });
+            }
+          }, 220);
+        } else if (demo === "4") {
+          const nextTab = currentPage === "our-story" ? "wedding-day" : "our-story";
+          openNav();
+          setTimeout(() => {
+            closeNav();
+            loadPage(nextTab);
+          }, 950);
         }
       });
     });
