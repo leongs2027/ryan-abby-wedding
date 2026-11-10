@@ -450,6 +450,9 @@
     }
 
     currentPage = targetSlug;
+    if (typeof refreshMotionTestObservers === "function") {
+      refreshMotionTestObservers();
+    }
   }
 
   function openNav() {
@@ -499,6 +502,74 @@
   // =========================================================================
   // 4. Interactive FAQ Accordions
   // =========================================================================
+  function toggleFaqSubsection(h3, forceOpen) {
+    if (!h3) return;
+    const isOpen = h3.classList.contains("open");
+    const targetOpen = typeof forceOpen === "boolean" ? forceOpen : !isOpen;
+    if (targetOpen === isOpen) return;
+
+    const nestedCont = h3.nextElementSibling;
+    const isMotionV1 = document.body.classList.contains("motion-test-v1");
+
+    if (!nestedCont || !isMotionV1) {
+      if (targetOpen) {
+        h3.classList.add("open");
+        if (nestedCont) {
+          nestedCont.style.height = "";
+          nestedCont.style.opacity = "";
+          nestedCont.style.transform = "";
+          nestedCont.style.display = "block";
+        }
+      } else {
+        h3.classList.remove("open");
+        if (nestedCont) nestedCont.style.display = "none";
+      }
+      setMinHeight(getHeaderHeight(), getFooterHeight());
+      return;
+    }
+
+    if (targetOpen) {
+      h3.classList.add("open");
+      nestedCont.style.display = "block";
+      nestedCont.style.height = "0px";
+      nestedCont.style.opacity = "0";
+      nestedCont.style.transform = "translateY(-8px)";
+      // Force layout before measuring scrollHeight
+      const targetHeight = nestedCont.scrollHeight;
+      requestAnimationFrame(() => {
+        nestedCont.style.height = targetHeight + "px";
+        nestedCont.style.opacity = "1";
+        nestedCont.style.transform = "translateY(0)";
+      });
+      setTimeout(() => {
+        if (h3.classList.contains("open")) {
+          nestedCont.style.height = "auto";
+          setMinHeight(getHeaderHeight(), getFooterHeight());
+        }
+      }, 430);
+    } else {
+      const startHeight = nestedCont.scrollHeight;
+      nestedCont.style.height = startHeight + "px";
+      nestedCont.style.opacity = "1";
+      nestedCont.style.transform = "translateY(0)";
+      h3.classList.remove("open");
+      requestAnimationFrame(() => {
+        nestedCont.style.height = "0px";
+        nestedCont.style.opacity = "0";
+        nestedCont.style.transform = "translateY(-8px)";
+      });
+      setTimeout(() => {
+        if (!h3.classList.contains("open")) {
+          nestedCont.style.display = "none";
+          nestedCont.style.height = "";
+          nestedCont.style.opacity = "";
+          nestedCont.style.transform = "";
+          setMinHeight(getHeaderHeight(), getFooterHeight());
+        }
+      }, 420);
+    }
+  }
+
   function initFaqAccordions() {
     const faqContainer = document.getElementById("sec-faqs");
     if (!faqContainer) return;
@@ -506,16 +577,7 @@
     faqContainer.addEventListener("click", (e) => {
       const h3 = e.target.closest(".subsection h3");
       if (!h3) return;
-      const isOpen = h3.classList.contains("open");
-      const nestedCont = h3.nextElementSibling;
-      if (isOpen) {
-        h3.classList.remove("open");
-        if (nestedCont) nestedCont.style.display = "none";
-      } else {
-        h3.classList.add("open");
-        if (nestedCont) nestedCont.style.display = "block";
-      }
-      setMinHeight(getHeaderHeight(), getFooterHeight());
+      toggleFaqSubsection(h3);
     });
   }
 
@@ -1459,6 +1521,197 @@
   }
 
   // =========================================================================
+  // 7C. Motion Test Batch 1 (Preview Mode via ?test=1 or x20web)
+  // =========================================================================
+  let iconObserver = null;
+  let galleryObserver = null;
+
+  function refreshMotionTestObservers() {
+    if (!document.body.classList.contains("motion-test-v1")) return;
+
+    // 1A. Observe Line-Art Illustrations (.iconImage)
+    if (!iconObserver && "IntersectionObserver" in window) {
+      iconObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("motion-in-view");
+            }
+          });
+        },
+        { threshold: 0.18, rootMargin: "0px 0px -30px 0px" }
+      );
+    }
+
+    document.querySelectorAll(".sectionCont .iconImage").forEach((el) => {
+      if (!el.classList.contains("motion-ready")) {
+        el.classList.add("motion-ready");
+      }
+      if (iconObserver) {
+        iconObserver.observe(el);
+      } else {
+        el.classList.add("motion-in-view");
+      }
+    });
+
+    // 2. Observe Gallery Cards (#sec-gallery > .section) with column stagger
+    if (!galleryObserver && "IntersectionObserver" in window) {
+      galleryObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("gallery-in-view");
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -20px 0px" }
+      );
+    }
+
+    const galleryItems = document.querySelectorAll("#sec-gallery > .section");
+    galleryItems.forEach((item, idx) => {
+      const colIdx = idx % 3;
+      item.style.setProperty("--gallery-stagger", `${colIdx * 85}ms`);
+      if (!item.classList.contains("gallery-card-ready")) {
+        item.classList.add("gallery-card-ready");
+      }
+      if (galleryObserver) {
+        galleryObserver.observe(item);
+      } else {
+        item.classList.add("gallery-in-view");
+      }
+    });
+  }
+
+  function initMotionTestBatch1() {
+    let isTestRequested = false;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("test") === "1") {
+        isTestRequested = true;
+        safeStorageSet("ryan_abby_motion_test", "1");
+      } else if (params.get("test") === "0") {
+        safeStorageRemove("ryan_abby_motion_test");
+        isTestRequested = false;
+      } else if (
+        safeStorageGet("ryan_abby_motion_test") === "1" ||
+        window.location.hostname.includes("x20web") ||
+        window.location.hostname === "localhost"
+      ) {
+        isTestRequested = true;
+      }
+    } catch (_) {}
+
+    if (!isTestRequested) return;
+
+    document.body.classList.add("motion-test-v1");
+    refreshMotionTestObservers();
+
+    // Bind 3D perspective mouse tilt on Gallery cards (desktop only)
+    document.querySelectorAll("#sec-gallery .section .imgCont").forEach((card) => {
+      card.addEventListener("mousemove", (e) => {
+        if (
+          !document.body.classList.contains("motion-test-v1") ||
+          window.innerWidth <= 768 ||
+          document.body.classList.contains("mobile-preview-mode")
+        ) {
+          return;
+        }
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        const rotY = (x * 7).toFixed(2);
+        const rotX = (-y * 7).toFixed(2);
+        card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`;
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "";
+      });
+    });
+
+    // Inject floating Motion Test Lab bar for easy 1-click testing
+    const lab = document.createElement("div");
+    lab.id = "motionTestLab";
+    lab.className = "visible";
+    lab.innerHTML = `
+      <span class="mtl-badge">&#10024; Motion Test 1</span>
+      <button type="button" class="mtl-btn" data-demo="1a">1A. Line-Art Float</button>
+      <button type="button" class="mtl-btn" data-demo="1b">1B. Button Sweep</button>
+      <button type="button" class="mtl-btn" data-demo="1c">1C. Spring FAQs</button>
+      <button type="button" class="mtl-btn" data-demo="2">2. Gallery Cascade &amp; 3D Tilt</button>
+      <button type="button" class="mtl-btn mtl-toggle" id="mtlToggleBtn">Mode: Test ON</button>
+    `;
+    document.body.appendChild(lab);
+
+    const toggleBtn = document.getElementById("mtlToggleBtn");
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        const enabled = document.body.classList.toggle("motion-test-v1");
+        toggleBtn.textContent = enabled ? "Mode: Test ON" : "Mode: Original (OFF)";
+        if (enabled) {
+          refreshMotionTestObservers();
+        }
+      });
+    }
+
+    lab.querySelectorAll(".mtl-btn[data-demo]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (!document.body.classList.contains("motion-test-v1")) {
+          document.body.classList.add("motion-test-v1");
+          if (toggleBtn) toggleBtn.textContent = "Mode: Test ON";
+        }
+        lab.querySelectorAll(".mtl-btn[data-demo]").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const demo = btn.getAttribute("data-demo");
+        if (demo === "1a") {
+          loadPage("wedding-day");
+          const icons = document.querySelectorAll("#sec-wedding-day .iconImage");
+          icons.forEach((ic) => {
+            ic.classList.remove("motion-in-view");
+          });
+          setTimeout(() => {
+            icons.forEach((ic) => ic.classList.add("motion-in-view"));
+          }, 120);
+        } else if (demo === "1b") {
+          loadPage("details");
+          setTimeout(() => {
+            const firstBtn = document.querySelector("#sec-details .button.outline");
+            if (firstBtn) {
+              const dest = Math.max(
+                0,
+                firstBtn.getBoundingClientRect().top + window.pageYOffset - window.innerHeight * 0.45
+              );
+              window.scrollTo({ top: dest, behavior: "smooth" });
+              setTimeout(() => {
+                firstBtn.classList.add("demo-hover-active");
+                setTimeout(() => firstBtn.classList.remove("demo-hover-active"), 1100);
+              }, 550);
+            }
+          }, 100);
+        } else if (demo === "1c") {
+          loadPage("faqs");
+          setTimeout(() => {
+            const firstH3 = document.querySelector("#sec-faqs .subsection h3");
+            if (firstH3) {
+              toggleFaqSubsection(firstH3, true);
+              setTimeout(() => toggleFaqSubsection(firstH3, false), 1400);
+              setTimeout(() => toggleFaqSubsection(firstH3, true), 2200);
+            }
+          }, 200);
+        } else if (demo === "2") {
+          loadPage("gallery");
+          const cards = document.querySelectorAll("#sec-gallery > .section");
+          cards.forEach((c) => c.classList.remove("gallery-in-view"));
+          setTimeout(() => {
+            refreshMotionTestObservers();
+          }, 120);
+        }
+      });
+    });
+  }
+
+  // =========================================================================
   // 8. Initialization
   // =========================================================================
   document.addEventListener("DOMContentLoaded", () => {
@@ -1524,6 +1777,7 @@
     initRsvpForm();
     initGalleryLightbox();
     initVibeStudio();
+    initMotionTestBatch1();
 
     updateCountdown();
     setInterval(updateCountdown, 30000);
