@@ -1945,7 +1945,7 @@ window.WEDDING_CONFIG = {
       items: [
         {
           heading: "SHUTTLE ROUTE",
-          body: "Shuttles will run every 30 minutes from 10:00 pm until 2:00 am connecting Villa Loriana (wedding), our afterparty, Hotel SLO and Hilton Garden Inn.",
+          body: "Shuttles will run continuously from 10:00 pm until 2:00 am connecting Villa Loriana (wedding), our afterparty, Hotel SLO and Hilton Garden Inn.",
         },
         {
           heading: "UBERS",
@@ -2034,7 +2034,7 @@ window.WEDDING_CONFIG = {
       {
         question: "How will transportation to and from the afterparty work?",
         answerParagraphs: [
-          "We have reserved shuttle service to run a continuous loop connecting Villa Loriana, our afterparty, and our recommended accommodations (Hotel SLO and Hilton Garden Inn). Shuttles will run continuously every 30 minutes from 10:00 pm until 2:00 am. This means you can stop by the afterparty and still be back at your hotel by midnight or even 11:00 pm!",
+          "We have reserved shuttle service to run a continuous loop connecting Villa Loriana, our afterparty, and our recommended accommodations (Hotel SLO and Hilton Garden Inn). Shuttles will run continuously from 10:00 pm until 2:00 am. This means you can stop by the afterparty and still be back at your hotel by midnight or even 11:00 pm!",
         ],
       },
       {
