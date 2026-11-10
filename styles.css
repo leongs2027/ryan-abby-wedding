@@ -2436,111 +2436,8 @@ body.motion-test-v1 main section.gallery-collage .section .imgCont:hover img {
   transform: scale(1.045);
 }
 
-/* Floating Motion Test Lab Bar (visible only in ?test=1 preview mode) */
-#motionTestLab {
-  position: fixed;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  z-index: 9500;
-  background: rgba(255, 250, 241, 0.96);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1.5px solid var(--color-primary);
-  box-shadow: 0 14px 40px rgba(156, 10, 13, 0.2);
-  border-radius: 999px;
-  padding: 8px 14px;
-  display: none;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: calc(100vw - 24px);
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-#motionTestLab.visible {
-  display: flex;
-}
-#motionTestLab .mtl-badge {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--color-bg);
-  background: var(--color-primary);
-  padding: 5px 10px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-#motionTestLab .mtl-btn {
-  appearance: none;
-  border: 1px solid rgba(156, 10, 13, 0.35);
-  background: #fff;
-  color: var(--color-primary);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 11px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-#motionTestLab .mtl-btn:hover,
-#motionTestLab .mtl-btn.active {
-  background: var(--color-primary);
-  color: var(--color-bg);
-  border-color: var(--color-primary);
-}
-#motionTestLab .mtl-toggle {
-  border-color: var(--color-primary);
-  background: var(--color-blush);
-}
-@media (max-width: 768px) {
-  #motionTestLab {
-    border-radius: 16px;
-    padding: 8px 10px;
-    bottom: 10px;
-    gap: 6px;
-  }
-  #motionTestLab .mtl-btn {
-    font-size: 11px;
-    padding: 5px 9px;
-  }
-}
-
-/* ==========================================================================
-   Motion Test Batch 2 (Scoped under body.motion-test-v2, enabled via ?test=2)
-   1. Choreographed Scroll-Reveal Animations (Bidirectional Fade + Glide + Blur)
-   2. Windowed Photo Parallax & Subtle Ken Burns Zoom on Split Sections
-   3. Sticky Scrollytelling on Split Sections (DrinkYoshi / Apple Style)
-   4. Cinematic Cross-Fade & Curtain Transitions Between Tabs
-   ========================================================================== */
-
-@keyframes v2HeroKenBurns {
-  0% {
-    transform: scale(1.09);
-  }
-  100% {
-    transform: scale(1.0);
-  }
-}
-
-@keyframes v2PageEnter {
-  0% {
-    opacity: 0;
-    transform: translateY(24px) scale(0.992);
-    filter: blur(5px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0px);
-  }
-}
-
-/* 1. Choreographed Scroll-Reveal (Fade + Upward Glide & Blur-to-Crisp, Bidirectional) */
-body.motion-test-v2 .v2-reveal-item {
+/* 3. Choreographed Scroll-Reveal (Fade + Upward Glide & Blur-to-Crisp, Bidirectional) */
+body.motion-test-v1 .v2-reveal-item {
   opacity: 0;
   transform: translateY(32px) scale(0.982);
   filter: blur(4.5px);
@@ -2551,83 +2448,14 @@ body.motion-test-v2 .v2-reveal-item {
   transition-delay: var(--v2-delay, 0ms);
   will-change: opacity, transform, filter;
 }
-body.motion-test-v2 .v2-reveal-item.v2-in-view {
+body.motion-test-v1 .v2-reveal-item.v2-in-view {
   opacity: 1;
   transform: translateY(0) scale(1);
   filter: blur(0px);
 }
-body.motion-test-v2 .v2-reveal-item.v2-above-view {
+body.motion-test-v1 .v2-reveal-item.v2-above-view {
   opacity: 0.12;
   transform: translateY(-24px) scale(0.985);
   filter: blur(3px);
   transition-delay: 0ms;
-}
-
-/* 2. Windowed Photo Parallax & Subtle Ken Burns Zoom */
-body.motion-test-v2 #homeHeroBg {
-  animation: v2HeroKenBurns 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: transform;
-}
-body.motion-test-v2 .section.split .sectionCont .imgCont,
-body.motion-test-v2 main section.rsvp > .imgCont {
-  overflow: hidden !important;
-}
-body.motion-test-v2 .section.split .sectionCont .imgCont .bgBox,
-body.motion-test-v2 main section.rsvp > .imgCont .bgBox {
-  top: -12% !important;
-  bottom: -12% !important;
-  height: 124% !important;
-  will-change: transform;
-  transition: transform 0.12s linear;
-}
-
-/* 3. Sticky Scrollytelling on Split Sections (Desktop > 768px) */
-@media (min-width: 769px) {
-  body.motion-test-v2:not(.mobile-preview-mode) main section.content_page {
-    overflow: visible !important;
-  }
-  body.motion-test-v2:not(.mobile-preview-mode) .section.split.v2-sticky-split {
-    align-items: flex-start !important;
-    position: relative;
-  }
-  body.motion-test-v2:not(.mobile-preview-mode) .section.split.v2-sticky-split > .sectionCont.v2-sticky-pin {
-    position: sticky !important;
-    top: 99px !important;
-    align-self: flex-start !important;
-    z-index: 4;
-  }
-  body.motion-test-v2:not(.mobile-preview-mode) #sec-our-story .section.split.v2-sticky-split > .sectionCont.v2-sticky-pin .imgCont {
-    height: calc(100vh - 99px) !important;
-    min-height: 520px !important;
-  }
-  body.motion-test-v2:not(.mobile-preview-mode) #sec-our-story .section.split.v2-sticky-split > .sectionCont.v2-sticky-scroll .imgCont,
-  body.motion-test-v2:not(.mobile-preview-mode) #sec-our-story .section.split.v2-sticky-split > .sectionCont.v2-sticky-scroll .imgCont .textCont {
-    min-height: 118vh !important;
-  }
-  body.motion-test-v2:not(.mobile-preview-mode) #sec-details .section.split.v2-sticky-split > .sectionCont.v2-sticky-scroll {
-    padding-top: 30px;
-    padding-bottom: 70px;
-  }
-}
-
-/* 4. Cinematic Cross-Fade & Curtain Transitions Between Tabs */
-body.motion-test-v2 main > section.v2-page-entering {
-  animation: v2PageEnter 0.68s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-body.motion-test-v2 main > section.v2-page-exiting {
-  opacity: 0 !important;
-  transform: translateY(-14px) scale(0.992) !important;
-  filter: blur(4px) !important;
-  transition:
-    opacity 0.22s ease,
-    transform 0.22s ease,
-    filter 0.22s ease !important;
-}
-body.motion-test-v2 #navContent.split .bgBox {
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  transition: transform 0.56s cubic-bezier(0.22, 1, 0.36, 1) !important;
-}
-body.motion-test-v2 #navContent.split nav {
-  transition: transform 0.56s cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
