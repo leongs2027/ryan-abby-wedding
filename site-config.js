@@ -1804,7 +1804,7 @@ window.WEDDING_CONFIG = {
         day: "Saturday",
         title: "AFTERPARTY",
         descriptionLines: [
-          "Continuous shuttle service connecting Villa Loriana, our afterparty, and our suggested accommodations (Hotel SLO & Hilton Garden Inn) will be available until 2:00 am.",
+          "Continuous shuttle service connecting Villa Loriana, our afterparty, and our suggested accommodations will be available until 2:00 am.",
           "",
           "TBD",
           "August 14",
@@ -1913,16 +1913,6 @@ window.WEDDING_CONFIG = {
         "We strongly recommend booking one of our suggested hotels, as our Saturday evening shuttles can drop you off directly at the end of the night.",
       hotels: [
         {
-          name: "HOTEL SLO",
-          descriptionLines: [
-            "10 minutes from SLO County Airport and ",
-            "15 minutes from Villa Loriana.",
-            "15% Discount Code: IDO2U",
-          ],
-          buttonLabel: "Book Hotel SLO (Code: IDO2U for 15% Off)",
-          buttonUrl: "https://hotel-slo.com/",
-        },
-        {
           name: "Hilton Garden Inn",
           descriptionLines: [
             "15 minutes from SLO County Airport and ",
@@ -1931,6 +1921,12 @@ window.WEDDING_CONFIG = {
           buttonLabel: "Book Here for the Best Price",
           buttonUrl:
             "https://www.hilton.com/en/book/reservation/flexibledates/?ctyhocn=SLOPBGI&arrivalDate=2027-08-13&departureDate=2027-08-15&room1NumAdults=2",
+        },
+        {
+          name: "Additional Suggested Accommodations",
+          descriptionLines: ["Coming soon!"],
+          buttonLabel: "",
+          buttonUrl: "",
         },
       ],
     },
@@ -1945,7 +1941,7 @@ window.WEDDING_CONFIG = {
       items: [
         {
           heading: "SHUTTLE ROUTE",
-          body: "Shuttles will run continuously from 10:00 pm until 2:00 am connecting Villa Loriana (wedding), our afterparty, Hotel SLO and Hilton Garden Inn.",
+          body: "Shuttles will run continuously from 10:00 pm until 2:00 am connecting Villa Loriana (wedding), our afterparty, and our suggested accommodations.",
         },
         {
           heading: "UBERS",
@@ -2034,7 +2030,7 @@ window.WEDDING_CONFIG = {
       {
         question: "How will transportation to and from the afterparty work?",
         answerParagraphs: [
-          "We have reserved shuttle service to run a continuous loop connecting Villa Loriana, our afterparty, and our recommended accommodations (Hotel SLO and Hilton Garden Inn). Shuttles will run continuously from 10:00 pm until 2:00 am. This means you can stop by the afterparty and still be back at your hotel by midnight or even 11:00 pm!",
+          "We have reserved shuttle service to run a continuous loop connecting Villa Loriana, our afterparty, and our suggested accommodations. Shuttles will run continuously from 10:00 pm until 2:00 am. This means you can stop by the afterparty and still be back at your hotel by midnight or even 11:00 pm!",
         ],
       },
       {
