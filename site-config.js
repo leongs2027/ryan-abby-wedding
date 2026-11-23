@@ -1910,7 +1910,7 @@ window.WEDDING_CONFIG = {
       },
       title: "Suggested Accommodations",
       subtitle:
-        "We strongly recommend booking one of our suggested hotels, as our Saturday evening shuttles can drop you off directly at the end of the night.",
+        "If you plan on taking our return shuttle from the wedding or afterparty, we recommend booking one of the hotels below. (Please note: shuttles run one-way back from Villa Loriana and the afterparty, so guests should plan their own ride or Uber to the venue.)",
       hotels: [
         {
           name: "Hilton Garden Inn",
